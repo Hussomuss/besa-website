@@ -164,6 +164,39 @@
   }
 }
 
+/*
+ * Same hairline, but driven by an ancestor .group rather than its own hover.
+ * For use inside a card where the whole card is the link, so the underline
+ * cannot own the hover itself. Kept as its own utility rather than stacking
+ * `group-hover:after:*` on link-underline, because that would set Tailwind's
+ * scale property against this rule's raw `transform` and the two conflict.
+ */
+@utility link-underline-group {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.4em;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 400ms var(--ease-editorial);
+  }
+
+  .group:hover &::after {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      transition: none;
+    }
+  }
+}
+
 /* Hairline that draws in from the left on hover. */
 @utility link-underline {
   position: relative;

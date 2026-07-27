@@ -30,3 +30,15 @@ export interface NavItem {
   label: string;
   href: Href;
 }
+
+export interface ServiceContent {
+  title: string;
+  description: string;
+  href: Href;
+  image: ImageContent;
+}
+
+export interface SectionContent {
+  heading: readonly HeadingSegment[];
+  lead?: string;
+}
