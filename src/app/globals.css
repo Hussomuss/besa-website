@@ -136,8 +136,15 @@
   mix-blend-mode: multiply;
 }
 
-/* Ink fill that rises from the baseline on hover. */
-@utility wipe-ink {
+/*
+ * The site's one button behaviour: a fill that rises from the baseline.
+ *
+ * The fill colour is a variable so light and dark grounds share a single
+ * mechanism rather than each inventing its own hover. It also responds to an
+ * ancestor .group, so a button sitting inside a card-wide link animates when
+ * the card is hovered.
+ */
+@utility wipe {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -147,13 +154,14 @@
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-color: var(--color-ink);
+    background-color: var(--wipe-fill, var(--color-ink));
     transform: scaleY(0);
     transform-origin: bottom;
     transition: transform 500ms var(--ease-editorial);
   }
 
-  &:hover::before {
+  &:hover::before,
+  .group:hover &::before {
     transform: scaleY(1);
   }
 

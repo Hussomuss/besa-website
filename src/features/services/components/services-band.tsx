@@ -32,9 +32,11 @@ export function ServicesBand() {
         </div>
 
         <ul className="mt-16 grid gap-x-5 gap-y-14 lg:mt-20 lg:grid-cols-3">
+          {/* h-full has to run through li and Reveal or the cards' mt-auto
+              has no height to push against and the buttons stop aligning. */}
           {SERVICES.map((service, index) => (
-            <li key={service.title}>
-              <Reveal delay={index * 90}>
+            <li key={service.title} className="h-full">
+              <Reveal delay={index * 90} className="h-full">
                 <ServiceCard service={service} />
               </Reveal>
             </li>

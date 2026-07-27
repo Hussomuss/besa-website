@@ -45,7 +45,8 @@ export function Hero() {
           </Text>
           <Button
             href={cta.href}
-            className="mt-8 max-lg:border-bone/40 max-lg:text-bone max-sm:w-full lg:mt-12"
+            variant="default"
+            className="mt-8 max-lg:[--wipe-fill:var(--color-bone)] max-lg:border-bone/40 max-lg:text-bone max-lg:hover:text-ink max-sm:w-full lg:mt-12"
           >
             {cta.label}
           </Button>
