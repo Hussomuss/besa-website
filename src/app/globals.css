@@ -8,6 +8,10 @@
 
   --container-page: 96rem;
 
+  /* Single source of truth for the header band. The hero subtracts this to
+     fill exactly one viewport. Changing it here moves both. */
+  --header-height: 6.5rem;
+
   --text-display: clamp(2.125rem, 1.4rem + 3.2vw, 4.5rem);
   --text-display--line-height: 1.04;
   --text-display--letter-spacing: -0.02em;

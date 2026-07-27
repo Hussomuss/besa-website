@@ -10,9 +10,17 @@ export function Hero() {
   const { heading, lead, cta, image } = HOME_HERO;
 
   return (
-    <Section spacing="none" className="overflow-hidden">
-      <Container className="grid gap-10 pt-24 pb-16 sm:gap-12 lg:min-h-screen lg:grid-cols-12 lg:items-center lg:gap-x-8 lg:py-24">
-        <div className="order-2 lg:order-1 lg:col-span-5">
+    <Section spacing="none" className="relative overflow-hidden">
+      <ImageFrame
+        src={image.src}
+        alt={image.alt}
+        isPriority
+        sizes="(min-width: 1024px) 52vw, 100vw"
+        className="aspect-auto h-[46vh] sm:h-[54vh] lg:absolute lg:inset-y-0 lg:right-0 lg:h-full lg:w-[52%]"
+      />
+
+      <Container className="pt-10 pb-16 lg:grid lg:min-h-[calc(100svh-var(--header-height))] lg:grid-cols-12 lg:items-center lg:py-24">
+        <div className="lg:col-span-5">
           <Heading as="h1" size="display" className="text-balance">
             {heading}
           </Heading>
@@ -22,18 +30,6 @@ export function Hero() {
           <Button href={cta.href} className="mt-8 max-sm:w-full lg:mt-12">
             {cta.label}
           </Button>
-        </div>
-
-        <div className="order-1 -mx-6 md:-mx-10 lg:order-2 lg:mx-0 lg:col-span-6 lg:col-start-7 lg:-mr-16">
-          <ImageFrame
-            src={image.src}
-            alt={image.alt}
-            shape="arch"
-            ratio="arch"
-            isPriority
-            sizes="(min-width: 1024px) 52vw, 100vw"
-            className="aspect-auto h-[46vh] sm:h-[54vh] lg:ml-auto lg:h-[82vh]"
-          />
         </div>
       </Container>
     </Section>

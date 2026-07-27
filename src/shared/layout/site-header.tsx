@@ -6,8 +6,8 @@ import { MobileNav } from "./mobile-nav";
 
 export function SiteHeader() {
   return (
-    <header className="absolute inset-x-0 top-0 z-50">
-      <Container className="flex items-center justify-between py-8">
+    <header className="relative z-50 bg-bone">
+      <Container className="flex h-[var(--header-height)] items-center justify-between">
         <Link href="/" aria-label="BESA Private Office, home">
           <Wordmark />
         </Link>
