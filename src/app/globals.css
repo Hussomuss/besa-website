@@ -103,6 +103,28 @@
   filter: saturate(0.82) contrast(1.06) brightness(0.99);
 }
 
+/*
+ * Mobile hero scrim, where the copy sits on the photograph.
+ *
+ * Five stops rather than Tailwind's single from/via/to, because the two text
+ * zones have different contrast requirements: the lead paragraph is small
+ * text and needs 4.5:1, while the display headline counts as large text and
+ * clears at 3:1. The copy block reaches roughly 72% up the frame, so density
+ * has to hold that high; a single via cannot do both without flattening the
+ * whole image. The ramp still resolves to transparent so the top of the
+ * photograph is left clean.
+ */
+@utility scrim-hero {
+  background-image: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--color-ink) 95%, transparent) 0%,
+    color-mix(in srgb, var(--color-ink) 88%, transparent) 40%,
+    color-mix(in srgb, var(--color-ink) 74%, transparent) 70%,
+    color-mix(in srgb, var(--color-ink) 42%, transparent) 88%,
+    transparent 100%
+  );
+}
+
 /* Ink fill that rises from the baseline on hover. */
 @utility wipe-ink {
   position: relative;

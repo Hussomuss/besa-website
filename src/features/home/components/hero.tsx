@@ -23,7 +23,7 @@ export function Hero() {
       {/* Scrim carries the copy on mobile only, where text sits on the photo. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-linear-to-t from-ink/92 from-0% via-ink/45 via-32% to-transparent to-64% lg:hidden"
+        className="scrim-hero absolute inset-0 lg:hidden"
       />
 
       <Container className="relative flex min-h-[calc(100svh-var(--header-height))] flex-col justify-end pt-16 pb-16 text-bone lg:grid lg:grid-cols-12 lg:items-center lg:py-24 lg:text-ink">
