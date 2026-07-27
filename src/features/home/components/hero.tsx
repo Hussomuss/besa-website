@@ -27,7 +27,7 @@ export function Hero() {
       />
 
       <Container className="relative flex min-h-[calc(100svh-var(--header-height))] flex-col justify-end pt-16 pb-16 text-bone lg:grid lg:grid-cols-12 lg:items-center lg:py-24 lg:text-ink">
-        <div className="lg:col-span-5">
+        <div className="max-lg:text-shadow-scrim lg:col-span-5">
           <Heading as="h1" size="display" className="text-balance">
             {heading.map((segment) =>
               segment.isAccent ? (
