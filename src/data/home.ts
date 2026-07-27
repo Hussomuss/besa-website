@@ -7,7 +7,7 @@ export const HOME_HERO: HeroContent = {
     { text: " spoken for." },
   ],
   lead: "We run the household, the diary and the travel, and we do it without needing to be chased.",
-  cta: { label: "Our services", href: "/services" },
+  cta: { label: "Enquire", href: "/contact" },
   image: {
     src: "https://images.pexels.com/photos/17154881/pexels-photo-17154881.jpeg",
     alt: "The facade and front door of a Georgian townhouse in central London.",
