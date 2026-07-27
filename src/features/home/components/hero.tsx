@@ -9,8 +9,9 @@ import { Text } from "@/shared/ui/text";
 export function Hero() {
   const { heading, lead, cta, image } = HOME_HERO;
 
+  // `isolate` keeps the scrim's multiply blend inside the hero.
   return (
-    <Section spacing="none" className="relative overflow-hidden">
+    <Section spacing="none" className="relative isolate overflow-hidden">
       <ImageFrame
         src={image.src}
         alt={image.alt}

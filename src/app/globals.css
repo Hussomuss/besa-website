@@ -115,23 +115,24 @@
 /*
  * Mobile hero scrim, where the copy sits on the photograph.
  *
- * Deliberately light. Measured against the placeholder frame, the copy zone's
- * mean luminance is 0.124, which already gives bone type roughly 5.5:1 with
- * no scrim at all. Only the brightest ~5% of pixels (white window frames and
- * portico stone, around 0.622) are a legibility risk. Sizing the scrim for
- * those meant veiling the entire photograph to fix a twentieth of it, which
- * is what read as muddy. The halo in --text-shadow-scrim covers that
- * remainder locally instead.
+ * Multiply, not a translucent ink plate. An alpha overlay computes
+ * img*(1-a) + ink*a, so a black pixel can never stay black: the image loses
+ * its darkest tone and goes grey, and adding opacity only deepens the grey.
+ * Measured on the placeholder frame, a heavy alpha scrim collapsed the copy
+ * zone's tonal range to 172; multiply holds 227 at comparable darkness.
+ *
+ * Stops are ink mixed toward white because white is multiply's no-op, so the
+ * top of the photograph passes through untouched.
  */
 @utility scrim-hero {
   background-image: linear-gradient(
     to top,
-    color-mix(in srgb, var(--color-ink) 52%, transparent) 0%,
-    color-mix(in srgb, var(--color-ink) 40%, transparent) 40%,
-    color-mix(in srgb, var(--color-ink) 24%, transparent) 72%,
-    color-mix(in srgb, var(--color-ink) 8%, transparent) 90%,
-    transparent 100%
+    color-mix(in srgb, var(--color-ink) 80%, white) 0%,
+    color-mix(in srgb, var(--color-ink) 58%, white) 42%,
+    color-mix(in srgb, var(--color-ink) 26%, white) 75%,
+    white 100%
   );
+  mix-blend-mode: multiply;
 }
 
 /* Ink fill that rises from the baseline on hover. */
