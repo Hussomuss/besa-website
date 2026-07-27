@@ -16,10 +16,16 @@ export function Hero() {
         alt={image.alt}
         isPriority
         sizes="(min-width: 1024px) 52vw, 100vw"
-        className="aspect-auto h-[46vh] sm:h-[54vh] lg:absolute lg:inset-y-0 lg:right-0 lg:h-full lg:w-[52%]"
+        className="absolute inset-0 aspect-auto h-full w-full lg:left-auto lg:w-[52%]"
       />
 
-      <Container className="pt-10 pb-16 lg:grid lg:min-h-[calc(100svh-var(--header-height))] lg:grid-cols-12 lg:items-center lg:py-24">
+      {/* Scrim carries the copy on mobile only, where text sits on the photo. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/50 to-ink/10 lg:hidden"
+      />
+
+      <Container className="relative flex min-h-[calc(100svh-var(--header-height))] flex-col justify-end pt-16 pb-16 text-bone lg:grid lg:grid-cols-12 lg:items-center lg:py-24 lg:text-ink">
         <div className="lg:col-span-5">
           <Heading as="h1" size="display" className="text-balance">
             {heading}
@@ -27,7 +33,10 @@ export function Hero() {
           <Text size="lead" className="mt-6 max-w-md lg:mt-8">
             {lead}
           </Text>
-          <Button href={cta.href} className="mt-8 max-sm:w-full lg:mt-12">
+          <Button
+            href={cta.href}
+            className="mt-8 max-lg:bg-bone max-lg:text-ink max-lg:hover:bg-sand max-sm:w-full lg:mt-12"
+          >
             {cta.label}
           </Button>
         </div>
