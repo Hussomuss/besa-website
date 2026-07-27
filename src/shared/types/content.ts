@@ -10,8 +10,17 @@ export interface CtaContent {
   href: Href;
 }
 
+/**
+ * Headings are segmented rather than a single string so a word can carry the
+ * italic accent without a component doing fragile string matching.
+ */
+export interface HeadingSegment {
+  text: string;
+  isAccent?: boolean;
+}
+
 export interface HeroContent {
-  heading: string;
+  heading: readonly HeadingSegment[];
   lead: string;
   cta: CtaContent;
   image: ImageContent;

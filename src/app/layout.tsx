@@ -8,6 +8,7 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   display: "swap",
   weight: ["300", "400"],
+  style: ["normal", "italic"],
   variable: "--font-cormorant",
 });
 

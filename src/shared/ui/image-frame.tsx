@@ -17,6 +17,8 @@ interface ImageFrameProps {
   shape?: Shape;
   ratio?: keyof typeof RATIO_CLASS;
   isPriority?: boolean;
+  /** Slow settle from a slight overscale. Use once, on the hero. */
+  hasIntro?: boolean;
   className?: string;
 }
 
@@ -27,6 +29,7 @@ export function ImageFrame({
   shape = "rect",
   ratio = "portrait",
   isPriority = false,
+  hasIntro = false,
   className,
 }: ImageFrameProps) {
   const isMasked = shape !== "rect";
@@ -49,7 +52,10 @@ export function ImageFrame({
         alt={alt}
         fill
         sizes={sizes}
-        className="object-cover"
+        className={cn(
+          "image-grade object-cover",
+          hasIntro && "animate-settle motion-reduce:animate-none",
+        )}
         loading={isPriority ? "eager" : "lazy"}
         fetchPriority={isPriority ? "high" : "auto"}
       />

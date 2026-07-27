@@ -9,7 +9,7 @@ export function PrimaryNav() {
           <li key={item.label}>
             <Link
               href={item.href}
-              className="font-sans text-label uppercase transition-opacity duration-300 hover:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-4"
+              className="link-underline font-sans text-label uppercase"
             >
               {item.label}
             </Link>

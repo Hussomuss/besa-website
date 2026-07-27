@@ -1,4 +1,10 @@
-@import "tailwindcss";
+/*
+ * Scan only src. Tailwind v4 auto-detects sources across the whole project,
+ * which means fenced code blocks in docs/ generate real utilities: the spec
+ * and plan documents were emitting CSS for classes no component uses.
+ */
+@import "tailwindcss" source(none);
+@source "../";
 
 @theme {
   --color-bone: #f7f4ef;
@@ -36,6 +42,17 @@
   --tracking-wordmark: 0.3em;
 
   --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-settle: settle 1200ms var(--ease-editorial) both;
+
+  @keyframes settle {
+    from {
+      transform: scale(1.06);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
 }
 
 @theme inline {
@@ -43,9 +60,86 @@
   --font-sans: var(--font-inter);
 }
 
+@layer base {
+  /* One focus treatment for the whole site, so no component reinvents it. */
+  :focus-visible {
+    outline: 2px solid var(--color-moss);
+    outline-offset: 4px;
+  }
+
+  ::selection {
+    background-color: var(--color-moss);
+    color: var(--color-bone);
+  }
+}
+
 @utility mask-shape {
   mask-image: var(--shape-mask);
   mask-size: 100% 100%;
   mask-repeat: no-repeat;
   mask-position: center;
+}
+
+/*
+ * House grade for photography. Stock images arrive in wildly different
+ * treatments; pulling every one toward a desaturated, slightly warm render
+ * is what makes a set of unrelated photos look art-directed.
+ */
+@utility image-grade {
+  filter: saturate(0.8) contrast(1.05) sepia(0.12) brightness(1.02);
+}
+
+/* Ink fill that rises from the baseline on hover. */
+@utility wipe-ink {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-color: var(--color-ink);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 500ms var(--ease-editorial);
+  }
+
+  &:hover::before {
+    transform: scaleY(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      transition: none;
+    }
+  }
+}
+
+/* Hairline that draws in from the left on hover. */
+@utility link-underline {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.4em;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 400ms var(--ease-editorial);
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
+      transition: none;
+    }
+  }
 }

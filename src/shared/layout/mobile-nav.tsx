@@ -34,7 +34,7 @@ export function MobileNav() {
         aria-expanded={isOpen}
         aria-controls="mobile-nav-panel"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-50 font-sans text-label uppercase focus-visible:outline-2 focus-visible:outline-offset-4"
+        className="relative z-50 font-sans text-label uppercase"
       >
         {isOpen ? "Close" : "Menu"}
       </button>

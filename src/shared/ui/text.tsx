@@ -14,6 +14,8 @@ interface TextProps {
 
 export function Text({ size = "body", className, children }: TextProps) {
   return (
-    <p className={cn("font-sans", SIZE_CLASS[size], className)}>{children}</p>
+    <p className={cn("font-sans text-pretty", SIZE_CLASS[size], className)}>
+      {children}
+    </p>
   );
 }

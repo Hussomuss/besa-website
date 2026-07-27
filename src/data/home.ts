@@ -1,8 +1,11 @@
 import type { HeroContent } from "@/shared/types/content";
 
 export const HOME_HERO: HeroContent = {
-  heading:
-    "Private lifestyle management for people whose time is already spoken for.",
+  heading: [
+    { text: "Private lifestyle management for people whose time is " },
+    { text: "already", isAccent: true },
+    { text: " spoken for." },
+  ],
   lead: "We run the household, the diary and the travel, and we do it without needing to be chased.",
   cta: { label: "Our services", href: "/services" },
   image: {
