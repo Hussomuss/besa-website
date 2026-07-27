@@ -31,11 +31,22 @@ export function ServicesBand() {
           ) : null}
         </div>
 
-        <ul className="mt-16 grid gap-x-5 gap-y-14 lg:mt-20 lg:grid-cols-3">
-          {/* h-full has to run through li and Reveal or the cards' mt-auto
-              has no height to push against and the buttons stop aligning. */}
+        {/*
+          Below lg this is a scroll-snap row rather than a stack: three square
+          images stacked make a very long scroll, and a peeking next card is a
+          clearer affordance than a scrollbar. The negative margin plus matching
+          padding lets cards scroll to the screen edge while still starting on
+          the container's text alignment; scroll-px keeps snapped cards on that
+          same line. At lg it reverts to a plain three-column grid.
+        */}
+        <ul className="no-scrollbar -mx-6 mt-16 flex snap-x snap-mandatory scroll-px-6 gap-5 overflow-x-auto px-6 md:-mx-10 md:scroll-px-10 md:px-10 lg:mx-0 lg:mt-20 lg:grid lg:snap-none lg:grid-cols-3 lg:overflow-visible lg:px-0">
+          {/* h-full has to run through li and Reveal or the cards' mt-auto has
+              no height to push against and the buttons stop aligning. */}
           {SERVICES.map((service, index) => (
-            <li key={service.title} className="h-full">
+            <li
+              key={service.title}
+              className="h-full w-[78vw] shrink-0 snap-start sm:w-[58vw] lg:w-auto"
+            >
               <Reveal delay={index * 90} className="h-full">
                 <ServiceCard service={service} />
               </Reveal>

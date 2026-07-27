@@ -96,6 +96,18 @@
   }
 }
 
+/*
+ * Hides the scrollbar on a snap row. Only used below lg, where the surface is
+ * touch and the peeking next card is the affordance.
+ */
+@utility no-scrollbar {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @utility mask-shape {
   mask-image: var(--shape-mask);
   mask-size: 100% 100%;
