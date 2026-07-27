@@ -127,9 +127,10 @@
 @utility scrim-hero {
   background-image: linear-gradient(
     to top,
-    color-mix(in srgb, var(--color-ink) 80%, white) 0%,
-    color-mix(in srgb, var(--color-ink) 58%, white) 42%,
-    color-mix(in srgb, var(--color-ink) 26%, white) 75%,
+    color-mix(in srgb, var(--color-ink) 82%, white) 0%,
+    color-mix(in srgb, var(--color-ink) 68%, white) 45%,
+    color-mix(in srgb, var(--color-ink) 48%, white) 72%,
+    color-mix(in srgb, var(--color-ink) 22%, white) 90%,
     white 100%
   );
   mix-blend-mode: multiply;
