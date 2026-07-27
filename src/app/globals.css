@@ -1,26 +1,47 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-bone: #f7f4ef;
+  --color-sand: #d9d2c7;
+  --color-moss: #495648;
+  --color-ink: #2c2c2a;
+
+  --container-page: 96rem;
+
+  --text-display: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-h2: clamp(2rem, 1.15rem + 3.4vw, 3.5rem);
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.015em;
+
+  --text-h3: clamp(1.375rem, 1.15rem + 1vw, 1.875rem);
+  --text-h3--line-height: 1.2;
+
+  --text-lead: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lead--line-height: 1.7;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.75;
+
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.2;
+  --text-label--letter-spacing: 0.18em;
+
+  --tracking-wordmark: 0.3em;
+
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-cormorant);
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility mask-shape {
+  mask-image: var(--shape-mask);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
 }
