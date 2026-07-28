@@ -80,15 +80,17 @@ export function NavMenu() {
         aria-label="Site navigation"
         tabIndex={-1}
         hidden={!isOpen}
-        className="fixed inset-0 z-40 bg-bone pt-28 text-ink lg:pt-40"
+        className="fixed inset-0 z-40 isolate overflow-hidden bg-bone pt-[var(--header-height)] text-ink"
       >
         {/* Container rather than a bare gutter, so the links land on the same
-            vertical as the wordmark above them at every width. */}
-        <Container>
-          <nav aria-label="Primary">
-            <ul className="flex flex-col gap-2">
+            vertical as the wordmark above them at every width. h-full works
+            because the panel is fixed inset-0: the rows divide the space below
+            the header, so a taller viewport is an airier menu. */}
+        <Container className="h-full">
+          <nav aria-label="Primary" className="h-full">
+            <ul className="flex h-full flex-col pb-[max(1.5rem,env(safe-area-inset-bottom))]">
               {NAV_ITEMS.map((item) => (
-                <li key={item.label}>
+                <li key={item.label} className="flex flex-1 items-center">
                   <Link
                     href={item.href}
                     onClick={() => setIsOpen(false)}
