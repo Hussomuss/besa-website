@@ -90,8 +90,14 @@ const OUTLINE_LG_CLASS: Record<Colour, string> = {
   sand: "lg:border-sand/50 lg:text-sand lg:hover:text-ink lg:active:text-ink lg:[--rise:var(--color-sand)]",
 };
 
+/*
+ * pointer-events-none rather than a :disabled variant on the rise: `:hover`
+ * still matches a disabled button in several engines, so gating the plane on
+ * the state would leave it rising under a finger that cannot press anything.
+ * Removing the element from hit-testing settles both at once.
+ */
 const BASE_CLASS =
-  "rise inline-flex items-center justify-center border px-10 py-4.5 font-sans text-label uppercase";
+  "rise inline-flex items-center justify-center border px-10 py-4.5 font-sans text-label uppercase disabled:pointer-events-none disabled:opacity-70";
 
 /**
  * A prop rather than a className so the only two answers stay the only two
@@ -173,6 +179,9 @@ interface ActionButtonProps extends BaseButtonProps {
   href?: never;
   type?: "button" | "submit";
   onClick?: () => void;
+  /** For a submit button whose action is in flight. A link cannot be disabled,
+      which is why this lives here rather than on BaseButtonProps. */
+  isDisabled?: boolean;
 }
 
 type ButtonProps = (LinkButtonProps | ActionButtonProps) & Palette;
@@ -196,6 +205,7 @@ export function Button(props: ButtonProps) {
     <button
       type={props.type ?? "button"}
       onClick={props.onClick}
+      disabled={props.isDisabled}
       className={classes}
     >
       {label}

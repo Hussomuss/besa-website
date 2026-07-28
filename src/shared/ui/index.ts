@@ -2,6 +2,7 @@ export { Accordion } from "./accordion";
 export { BranchBackdrop } from "./branch-backdrop";
 export { Button } from "./button";
 export { Container } from "./container";
+export { Field } from "./field";
 export { Heading } from "./heading";
 export { ImageFrame } from "./image-frame";
 export { Reveal } from "./reveal";

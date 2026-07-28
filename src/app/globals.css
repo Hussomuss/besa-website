@@ -99,6 +99,39 @@
   --ease-rise: cubic-bezier(0.33, 1, 0.68, 1);
   --ease-lift: cubic-bezier(0.34, 1.5, 0.64, 1);
 
+  /*
+   * The same idea as --ease-lift one storey up: the message that rides the
+   * contact panel's rise. A cubic-bezier cannot describe a spring, because a
+   * spring's overshoot decays and a bezier's does not — it can only bulge once.
+   * So this is the analytic solution of stiffness 170, damping 22, mass 1,
+   * sampled every 50ms and handed to linear().
+   *
+   * Underdamped at ζ = 0.844, which peaks at 1.007 just past 450ms. Seven
+   * thousandths of the travel is not a bounce; it is the difference between a
+   * thing arriving and a thing being placed.
+   *
+   * Used only where the moving element is NOT clipped. On a clipped plane an
+   * overshoot cannot reach the eye — which is why the rise itself stays on
+   * --ease-rise and this is spent on the type instead.
+   */
+  --ease-spring: linear(
+    0,
+    0.147,
+    0.408,
+    0.643,
+    0.81,
+    0.913,
+    0.969,
+    0.995,
+    1.005,
+    1.007,
+    1.006,
+    1.004,
+    1.003,
+    1.001,
+    1
+  );
+
   /* Opacity only. A scale-in crops the composition for its first second and
      forces "keep the subject inside 8% of every edge" into the photo brief. */
   --animate-settle: settle 900ms var(--ease-editorial) both;
@@ -119,6 +152,17 @@
 }
 
 @layer base {
+  /*
+   * The noise tile, hoisted because two things carry it now: the
+   * `surface-grain` utility, and the rule further down that runs a moss page's
+   * ground through the footer. Written here rather than in `@theme` so it
+   * cannot be tree-shaken for looking unused — it is only ever referenced from
+   * inside a `@utility` and from an unlayered rule.
+   */
+  :root {
+    --grain-tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+  }
+
   /* The nav hash-links rely on this; Next 16 needs the matching
      data-scroll-behavior attribute on <html> to leave it alone. */
   @media (prefers-reduced-motion: no-preference) {
@@ -295,6 +339,76 @@ body:has(main) > header:has([aria-expanded="true"]) {
 }
 
 /*
+ * ONE GROUND FOR THE WHOLE DOCUMENT.
+ *
+ * Where a page is moss at every width, the moss footer beneath it is not a
+ * second band — it is the same ground continuing. Painting the surface twice
+ * cannot express that: two blurred fields each fade at their own edges, so
+ * butting them always leaves the seam this exists to remove. So the field is
+ * painted once, behind everything, and both the page section and the footer
+ * are transparent over it. There is no boundary because there is no second
+ * surface.
+ *
+ * Fixed rather than absolute, and that is load-bearing rather than a
+ * preference. An absolutely positioned layer inset past its containing block
+ * contributes to scrollable overflow, so the 240px of margin the blur needs on
+ * the right and bottom would extend the document and raise scrollbars on a
+ * page that has nothing to scroll to. Fixed elements contribute no overflow at
+ * all, which lets the blur keep its faded edges safely outside the viewport.
+ *
+ * The base colour stays on the body: it propagates to the canvas, so the moss
+ * also covers overscroll rather than stopping where the document does.
+ *
+ * `:not([data-ground-lg])` separates a page that is moss all the way down from
+ * one that merely starts moss — the about page is moss on a phone and bone at
+ * lg, and its footer still has an edge to draw.
+ */
+body:has(main[data-ground="moss"]:not([data-ground-lg])) {
+  --surface-1: color-mix(in srgb, var(--color-bone) 13%, var(--color-moss));
+  --surface-2: color-mix(in srgb, var(--color-sand) 9%, var(--color-moss));
+  --surface-3: color-mix(in srgb, var(--color-ink) 45%, var(--color-moss));
+
+  background-color: var(--color-moss);
+}
+
+body:has(main[data-ground="moss"]:not([data-ground-lg]))::before {
+  content: "";
+  position: fixed;
+  inset: -240px;
+  z-index: -2;
+  pointer-events: none;
+  filter: blur(120px);
+  background-image:
+    radial-gradient(at 90.3% 87.6%, var(--surface-3) 0px, transparent 50%),
+    radial-gradient(at 47.3% 49.4%, var(--surface-1) 0px, transparent 50%),
+    radial-gradient(at 84.1% 67.2%, var(--surface-2) 0px, transparent 50%),
+    radial-gradient(at 11.5% 62.9%, var(--surface-2) 0px, transparent 50%),
+    radial-gradient(at 66.1% 41.9%, var(--surface-1) 0px, transparent 50%),
+    radial-gradient(at 21.2% 38.3%, var(--surface-2) 0px, transparent 50%),
+    radial-gradient(at 8.2% 85.9%, var(--surface-3) 0px, transparent 50%),
+    radial-gradient(at 14.1% 14.2%, var(--surface-2) 0px, transparent 50%),
+    radial-gradient(at 84.6% 19.4%, var(--surface-2) 0px, transparent 50%);
+}
+
+body:has(main[data-ground="moss"]:not([data-ground-lg]))::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--grain-tile);
+  background-size: 160px;
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+}
+
+/* Both stand down so the field behind them is what shows. The footer keeps its
+   bone type; only its ground is withdrawn. */
+body:has(main[data-ground="moss"]:not([data-ground-lg])) > footer {
+  background-color: transparent;
+}
+
+/*
  * Hides the scrollbar on a snap row. Only used below lg, where the surface is
  * touch and the peeking next card is the affordance.
  */
@@ -371,7 +485,7 @@ body:has(main) > header:has([aria-expanded="true"]) {
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-image: var(--grain-tile);
     background-size: 160px;
     opacity: var(--surface-grain-opacity, 0.4);
     mix-blend-mode: var(--surface-grain-blend, soft-light);
@@ -588,6 +702,62 @@ body:has(main) > header:has([aria-expanded="true"]) {
   @media (prefers-reduced-motion: reduce) {
     &::before,
     & > span {
+      transition: none;
+    }
+  }
+}
+
+/*
+ * A form field's focus line. The input carries a sand baseline at rest; this
+ * draws an ink one over it from the left when the field is entered, on the same
+ * curve and origin as link-underline.
+ *
+ * The no-rules-or-dividers rule governs decoration and separation. This is
+ * neither: it is the affordance that says where to type, and the ruling on it
+ * was made deliberately against a no-line alternative.
+ *
+ * It belongs on a wrapper rather than on the input because an input is a
+ * replaced element and does not render ::after in any engine. focus-within is
+ * what lets the wrapper answer to the input it holds — which also means the
+ * wrapper must contain the input and nothing below it, or bottom: 0 lands under
+ * the error message instead of on the baseline.
+ */
+@utility field-line {
+  position: relative;
+
+  /* 2px over the input's own 1px sand baseline, so entering a field thickens
+     the line as well as darkening it. It is also what lets the ring below
+     stand down: 2px across the full width of the control, at 9.9:1 against the
+     sand it replaces, is a focus indicator in its own right. */
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--color-ink);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 400ms var(--ease-editorial);
+  }
+
+  &:focus-within::after {
+    transform: scaleX(1);
+  }
+
+  /*
+   * The one exception to the site's single focus treatment, and it is stated
+   * here rather than in a component so that focus stays governed by this file
+   * alone. A ring draws a box around a field whose entire design is that it has
+   * no box — and unlike a link or a button, the control already carries an
+   * indicator of its own in the line above.
+   */
+  & :is(input, textarea):focus-visible {
+    outline: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::after {
       transition: none;
     }
   }
