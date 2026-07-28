@@ -10,8 +10,25 @@ export function ServicesBand() {
   const { heading, lead } = SERVICES_INTRO;
 
   return (
-    <Section id="services" tone="moss" spacing="none">
-      <Container className="flex min-h-screen flex-col justify-center py-24 lg:py-28">
+    <Section
+      id="services"
+      tone="moss"
+      spacing="none"
+      className="relative overflow-hidden"
+    >
+      {/*
+        Decorative only, so aria-hidden and pointer-events-none. It is a
+        background image rather than an <img> because it carries no meaning and
+        should never be a DOM node competing with the content. Light line work
+        on transparent, which is why it lives on moss and not on bone: on a pale
+        ground it would all but disappear.
+      */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 w-[38vw] max-w-[34rem] bg-[url('/graphics/passionflower.svg')] bg-contain bg-right bg-no-repeat opacity-45 max-lg:hidden"
+      />
+
+      <Container className="relative flex min-h-screen flex-col justify-center py-24 lg:py-28">
         <div className="max-w-xl">
           <Heading as="h2" size="h2">
             {heading.map((segment) =>
