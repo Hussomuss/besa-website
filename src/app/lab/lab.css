@@ -1,0 +1,89 @@
+/*
+ * Prototypes for the component lab at /lab.
+ *
+ * Behaviour only. Geometry, type and colour stay in Tailwind utilities on the
+ * JSX so nothing here duplicates a design token; the one thing these rules
+ * name directly is the rise colour, and that arrives as --lab-fill.
+ *
+ * Nothing outside src/app/lab imports this. Delete each block as its
+ * component settles and moves into shared/ui.
+ */
+
+.lab-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  cursor: pointer;
+
+  /*
+   * The three lines that decide whether a button feels native on a phone.
+   * Without them Android paints a grey flash over the fill, iOS waits 300ms
+   * for a possible double-tap, and a long press selects the label instead of
+   * showing the pressed state.
+   */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+/* ------------------------------------------------------------- Button --- */
+
+/*
+ * A plane of the partner colour rises from the baseline.
+ *
+ * The plane is clipped by the button, so a curve that passes scaleY(1) simply
+ * arrives early and holds against the top edge: overshoot cannot be seen here
+ * and damping only shows in the approach. --lab-lift exists because the label
+ * is the one part of the gesture that is not clipped, and therefore the only
+ * place a spring is visible.
+ *
+ * Every hover rule is gated on (hover: hover). iOS keeps :hover latched after
+ * a tap until you touch something else, so an ungated hover state leaves the
+ * button lit long after the finger has gone.
+ */
+.lab-rise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--lab-fill, var(--color-moss));
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform var(--lab-rise-ms, 440ms)
+    var(--lab-rise-ease, cubic-bezier(0.33, 1, 0.68, 1));
+}
+
+.lab-rise > span {
+  display: inline-block;
+  transition: transform var(--lab-lift-ms, 520ms)
+    var(--lab-lift-ease, cubic-bezier(0.34, 1.5, 0.64, 1))
+    var(--lab-lift-delay, 0ms);
+}
+
+.lab-rise:active::before {
+  transform: scaleY(1);
+}
+
+.lab-rise:active > span {
+  transform: translateY(var(--lab-lift, 0));
+}
+
+@media (hover: hover) {
+  .lab-rise:hover::before {
+    transform: scaleY(1);
+  }
+
+  .lab-rise:hover > span {
+    transform: translateY(var(--lab-lift, 0));
+  }
+}
+
+/* ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .lab-btn,
+  .lab-btn::before,
+  .lab-btn > span {
+    transition: none;
+  }
+}
