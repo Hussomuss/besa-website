@@ -1,4 +1,5 @@
 export { Accordion } from "./accordion";
+export { BranchBackdrop } from "./branch-backdrop";
 export { Button } from "./button";
 export { Container } from "./container";
 export { Heading } from "./heading";
