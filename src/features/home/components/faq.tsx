@@ -2,29 +2,34 @@ import { FAQ } from "@/data/faq";
 import { Accordion } from "@/shared/ui/accordion";
 import { Container } from "@/shared/ui/container";
 import { Heading } from "@/shared/ui/heading";
+import { ImageFrame } from "@/shared/ui/image-frame";
 import { Reveal } from "@/shared/ui/reveal";
 import { Section } from "@/shared/ui/section";
 import { ClosingEnquiry } from "./closing-enquiry";
 
+/**
+ * Bleeds the image to the viewport's left edge from inside a centred, capped
+ * container: the gutter, plus half of whatever the viewport overshoots the
+ * container's max width by. Hard-coding a vw percentage would drift as the
+ * window changes; this stays exact at every width.
+ */
+const BLEED_LEFT =
+  "lg:-ml-[calc(4rem+max(0px,(100vw-var(--container-page))/2))]";
+
 export function Faq() {
-  const { heading, items } = FAQ;
+  const { heading, items, image } = FAQ;
 
   return (
-    <Section id="questions">
-      <Container>
-        <Reveal>
-          {/*
-            Columns 1-5 and 7-12, the same relationship Our Approach uses
-            directly above, so the ending reads as one movement. The Accordion
-            is domain-free, so question and answer are mapped to summary and
-            content here rather than inside the primitive.
-          */}
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-x-8">
-            <Heading
-              as="h2"
-              size="h2"
-              className="text-balance lg:col-span-5 lg:col-start-1"
-            >
+    <Section id="questions" spacing="none">
+      {/*
+        No bottom padding on the container: the image column runs to the
+        section's edge so it meets the footer's top border. The text column
+        carries the section's closing padding instead.
+      */}
+      <Container className="grid gap-10 pt-20 md:pt-28 lg:grid-cols-12 lg:gap-x-8 lg:pt-36">
+        <div className="flex flex-col lg:col-span-5">
+          <Reveal>
+            <Heading as="h2" size="h2" className="text-balance">
               {heading.map((segment) =>
                 segment.isAccent ? (
                   <em key={segment.text} className="font-normal italic">
@@ -35,22 +40,34 @@ export function Faq() {
                 ),
               )}
             </Heading>
+          </Reveal>
 
+          {/* min-h-0 lets flex-1 shrink inside the stretched grid row rather
+              than being floored at the image's intrinsic height. */}
+          <div className={`mt-14 hidden min-h-0 flex-1 lg:block ${BLEED_LEFT}`}>
+            <ImageFrame
+              src={image.src}
+              alt={image.alt}
+              sizes="(min-width: 1536px) 830px, (min-width: 1024px) 45vw, 100vw"
+              className="aspect-auto h-full"
+            />
+          </div>
+        </div>
+
+        <div className="pb-20 md:pb-28 lg:col-span-6 lg:col-start-7 lg:pb-36">
+          <Reveal>
             <Accordion
-              className="lg:col-span-6 lg:col-start-7"
               items={items.map((item) => ({
                 summary: item.question,
                 content: item.answer,
               }))}
             />
-          </div>
-        </Reveal>
+          </Reveal>
 
-        {/* Its own Reveal: use-in-view fires at 12% and disconnects, so sharing
-            the grid's wrapper meant this animated long before it was on screen. */}
-        <Reveal>
-          <ClosingEnquiry />
-        </Reveal>
+          <Reveal>
+            <ClosingEnquiry />
+          </Reveal>
+        </div>
       </Container>
     </Section>
   );

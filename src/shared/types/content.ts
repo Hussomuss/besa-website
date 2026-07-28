@@ -59,4 +59,5 @@ export interface FaqItem {
 
 export interface FaqContent extends SectionContent {
   items: readonly FaqItem[];
+  image: ImageContent;
 }

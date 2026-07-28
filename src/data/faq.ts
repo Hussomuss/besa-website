@@ -8,6 +8,15 @@ import type { FaqContent } from "@/shared/types/content";
  */
 export const FAQ: FaqContent = {
   heading: [{ text: "What people ask first." }],
+  /**
+   * Served locally rather than from Pexels: it is pre-cropped to the left of
+   * the frame at roughly the rendered aspect, which the remote original is
+   * not. 2.2MB JPEG to a 26KB AVIF.
+   */
+  image: {
+    src: "/images/faq-desk.avif",
+    alt: "A desk in low light with a camera, a planner and a eucalyptus sprig.",
+  },
   items: [
     {
       question: "How does an engagement begin?",
