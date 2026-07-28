@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { SERVICES, SERVICES_INTRO } from "@/data/services";
 import { Container } from "@/shared/ui/container";
 import { Heading } from "@/shared/ui/heading";
@@ -17,15 +18,15 @@ export function ServicesBand() {
       className="relative overflow-hidden"
     >
       {/*
-        Decorative only, so aria-hidden and pointer-events-none. It is a
-        background image rather than an <img> because it carries no meaning and
-        should never be a DOM node competing with the content. Light line work
-        on transparent, which is why it lives on moss and not on bone: on a pale
-        ground it would all but disappear.
+        Decorative only: aria-hidden, pointer-events-none, and no DOM content.
+        Carried as an alpha mask filled with bone rather than as a picture, so
+        the artwork takes its colour from CSS and the same file could sit on a
+        pale ground in ink.
       */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 w-[38vw] max-w-[34rem] bg-[url('/graphics/passionflower.svg')] bg-contain bg-right bg-no-repeat opacity-45 max-lg:hidden"
+        style={{ "--art-mask": "url('/graphics/quaking-grass.avif')" } as CSSProperties}
+        className="mask-art pointer-events-none absolute inset-y-0 left-0 w-[34vw] max-w-[30rem] bg-bone opacity-40 max-lg:hidden"
       />
 
       <Container className="relative flex min-h-screen flex-col justify-center py-24 lg:py-28">
