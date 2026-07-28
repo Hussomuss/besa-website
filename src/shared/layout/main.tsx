@@ -12,12 +12,22 @@ import { cn } from "@/shared/lib/cn";
  * band in flow, `moss` takes bone marks with no scrim because a shadow on a
  * flat colour is a smudge, and `photo` takes bone marks with one.
  *
+ * `pale` is a photograph light enough to keep ink marks, and it takes no
+ * shadow at all. It is a separate value rather than a judgement call at the
+ * call site, because getting it wrong greys the wordmark out on a picture,
+ * which is the failure `photo` exists to prevent.
+ *
+ * Choose it on the wall the marks stand on, not on the average of the frame,
+ * and expect to need `menuSpan` with it. A pale photograph's failure mode is
+ * fine dark detail crossing the glyphs, which no average will show you and no
+ * mark colour will fix — the trigger has to be somewhere else.
+ *
  * Anything other than `bone` also floats the header, and that is decided by
  * the *base* value alone, so it is all-or-nothing per page: a header that
  * changed from static to absolute at a breakpoint would reflow the document
  * under the reader.
  */
-type Ground = "bone" | "moss" | "photo";
+type Ground = "bone" | "moss" | "photo" | "pale";
 
 /**
  * How much of the page width the header's marks span. `full` puts the trigger

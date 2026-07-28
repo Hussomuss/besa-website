@@ -33,7 +33,15 @@ export interface NavItem {
 
 export interface ServiceContent {
   title: string;
+  /** The one line a card can hold, for the home page's three-up row. */
   description: string;
+  /**
+   * The same service at the length the services page gives it. Separate from
+   * `description` rather than replacing it: a card and an index row are not
+   * the same brief, and writing one string for both would either overflow the
+   * card or leave the index looking like a caption.
+   */
+  detail: string;
   href: Href;
   image: ImageContent;
 }

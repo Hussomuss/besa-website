@@ -6,6 +6,26 @@
 @import "tailwindcss" source(none);
 @source "../";
 
+/*
+ * Wide enough to lay type over a landscape photograph.
+ *
+ * Aspect ratio, because the constraint is geometric rather than a matter of
+ * screen class. Covering a 16:9 photograph into a box narrower than it crops
+ * the sides, and the empty wall a heading stands on is exactly what gets
+ * cropped away first. 4/3 is where the arithmetic turns: below it, less than
+ * 45% of the visible frame is still empty wall, which is not enough to set a
+ * display heading in.
+ *
+ * And width as well, which is a constraint from a different direction. A page
+ * that overlays type on a photograph also has to put the menu trigger
+ * somewhere legible, and the only axis MenuSpan can vary on is `lg`. So a
+ * layout that needs its own span has to be a subset of `lg`, or the span
+ * cannot describe it: a phone held sideways clears the ratio, is nowhere near
+ * `lg`, and would take the base span while wearing the overlay layout.
+ * Requiring both keeps `wide` inside `lg`, and the pair stays answerable.
+ */
+@custom-variant wide (@media (width >= 64rem) and (min-aspect-ratio: 4 / 3));
+
 @theme {
   --color-bone: #f7f4ef;
   --color-sand: #d9d2c7;
@@ -384,6 +404,30 @@ body:has(main[data-ground="photo"]) > header {
 }
 
 /*
+ * A photograph pale enough to keep ink marks, so it takes the float without
+ * the reversal. `photo` and `pale` differ only in what the picture is: the
+ * services still life is a bone wall in daylight, where bone marks would
+ * disappear and a dark scrim would be a bruise on the one clean part of the
+ * frame.
+ *
+ * No shadow of either kind, and that is the point rather than an omission.
+ * `pale` says which way the marks read; it does not promise the picture is
+ * uniform, and a pale photograph fails differently from a dark one. A dark
+ * frame has bright patches, which are broad and show up in an average; a pale
+ * frame has fine dark detail, which averages away to nothing and then cuts
+ * through the letterforms anyway. The services still life reads 10.7:1 under
+ * the wordmark and averages 5.6:1 under the trigger, where its fifth
+ * percentile is 2.5:1 — the mean hides it completely.
+ *
+ * The answer to that is the span, not a halo. Moving the trigger onto clean
+ * wall takes it to 9.4:1 at worst; haloing it in place would leave the one
+ * control on the page still sitting in the busiest part of the picture.
+ */
+body:has(main[data-ground="pale"]) > header {
+  --mark: var(--color-ink);
+}
+
+/*
  * Where the trigger sits, as its distance from the page's right edge. A span
  * of 1/2 puts its right edge on the page's midpoint, which is where the home
  * hero's photograph begins — so the control lands on the bone half rather than
@@ -436,6 +480,11 @@ body:has(main[data-menu-span="1/3"]) > header {
   body:has(main[data-ground-lg="photo"]) > header {
     --mark: var(--color-bone);
     --mark-shadow: var(--text-shadow-scrim);
+  }
+
+  body:has(main[data-ground-lg="pale"]) > header {
+    --mark: var(--color-ink);
+    --mark-shadow: none;
   }
 
   body:has(main[data-menu-span-lg="full"]) > header {
@@ -765,6 +814,25 @@ body:has(main[data-ground="moss"]:not([data-ground-lg])) > footer {
  */
 @utility bg-moss-deep {
   background-color: color-mix(in srgb, var(--color-ink) 28%, var(--color-moss));
+}
+
+/*
+ * The wall in the services still life, as a ground.
+ *
+ * Sampled off the photograph itself at #e6ded5, which is warmer and a stop
+ * darker than bone — near enough that it reads as the same family, far enough
+ * that butting the frame against bg-bone leaves a visible seam along the
+ * photograph's edge. This is the colour that makes the seam disappear, so the
+ * picture can stop wherever the composition wants rather than only at an edge
+ * of the viewport.
+ *
+ * Mixed rather than picked, as bg-moss-deep is: bone 40% over sand resolves to
+ * #e5dfd7, one or two levels off the sample in each channel and invisible at
+ * the join. The palette stays the four tokens it was given, and if bone or
+ * sand are ever retuned this follows them instead of drifting apart.
+ */
+@utility bg-linen {
+  background-color: color-mix(in srgb, var(--color-bone) 40%, var(--color-sand));
 }
 
 /*
