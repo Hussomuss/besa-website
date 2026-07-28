@@ -12,6 +12,21 @@
   --color-moss: #495648;
   --color-ink: #2c2c2a;
 
+  /*
+   * The fifth token, and the only one that is not a ground. A form has to be
+   * able to say a thing is wrong, and none of the four can: sand and bone are
+   * the surfaces, moss and ink are the type.
+   *
+   * Earthy rather than a stock alert red, so it reads as belonging to this
+   * palette while still being unmistakably red — it is a shade off the rust in
+   * the photography rather than a signal borrowed from a browser. On bone it
+   * measures 6.35:1, which clears AA for text at label size with room over.
+   *
+   * Type only. It is never a ground and never a button fill; an error is a
+   * sentence, not a panel.
+   */
+  --color-rust: #9e3629;
+
   --container-page: 96rem;
 
   /* Single source of truth for the header band. The hero subtracts this to
@@ -742,6 +757,14 @@ body:has(main[data-ground="moss"]:not([data-ground-lg])) > footer {
   }
 
   &:focus-within::after {
+    transform: scaleX(1);
+  }
+
+  /* A rejected field keeps its line drawn at all times rather than only on
+     entry, so the fault is visible while the reader is somewhere else in the
+     form — which is the whole point of showing it after a submission. */
+  &[data-invalid]::after {
+    background-color: var(--color-rust);
     transform: scaleX(1);
   }
 

@@ -85,15 +85,30 @@ export type EnquiryField = "name" | "email" | "phone" | "note";
 export interface ContactContent {
   heading: readonly HeadingSegment[];
   labels: Record<EnquiryField, string>;
+  /**
+   * Character caps, kept beside the messages that quote them so the number and
+   * the sentence cannot drift apart. Enforced twice: by `maxLength` in the
+   * browser, which is the pleasant half, and again in the action, which is the
+   * half that matters — a Server Action is a public POST endpoint and the
+   * browser is not a gate.
+   */
+  limits: Record<EnquiryField, number>;
   submit: string;
   /** Replaces the submit label while the action is in flight. */
   pending: string;
   /**
-   * Phone is absent because phone is optional, so the type is what stops a
-   * message being written for a field that can never fail. `failed` is the
-   * action's own, for when the send itself does not complete.
+   * One message per way a field can fail, rather than one per field. Phone has
+   * no `missing` because phone is optional, and the shape is what stops anyone
+   * writing a sentence that could never be shown. `failed` is the action's own,
+   * for when the send itself does not complete.
    */
-  errors: Record<Exclude<EnquiryField, "phone">, string> & { failed: string };
+  errors: {
+    name: { missing: string; long: string };
+    email: { missing: string; invalid: string; long: string };
+    phone: { invalid: string; long: string };
+    note: { missing: string; long: string };
+    failed: string;
+  };
   success: {
     heading: readonly HeadingSegment[];
     body: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { CONTACT } from "@/data/contact";
 import { SITE } from "@/data/site";
@@ -8,7 +8,7 @@ import { Button } from "@/shared/ui/button";
 import { Field } from "@/shared/ui/field";
 import { Heading } from "@/shared/ui/heading";
 import { Text } from "@/shared/ui/text";
-import { IDLE_ENQUIRY } from "../actions/enquiry-state";
+import { HONEYPOT_FIELD, IDLE_ENQUIRY } from "../actions/enquiry-state";
 import { sendEnquiry } from "../actions/send-enquiry";
 
 /**
@@ -61,13 +61,41 @@ function DirectLine({ className }: { className?: string }) {
 export function EnquiryForm({ children }: { children: ReactNode }) {
   const [state, action, isPending] = useActionState(sendEnquiry, IDLE_ENQUIRY);
   const isSent = state.status === "sent";
+  const formRef = useRef<HTMLFormElement>(null);
+
+  /*
+   * Send the reader to the first thing that is wrong, rather than leaving them
+   * to find it. Queried by `[aria-invalid]` rather than by walking a list of
+   * field names: the first match in the DOM is the first one on the page, and
+   * this stays correct if the fields are ever reordered.
+   *
+   * Focusing it is also what announces it — the control names its own error
+   * through aria-describedby, so a screen reader reads the label and the reason
+   * together. `state` is a fresh object per submission, so a second attempt
+   * that fails the same way still moves focus.
+   */
+  useEffect(() => {
+    if (state.status !== "invalid") return;
+    formRef.current?.querySelector<HTMLElement>("[aria-invalid]")?.focus();
+  }, [state]);
 
   return (
     <div className="relative flex flex-1 flex-col">
       <div className={`flex flex-1 flex-col ${PANEL_INSET}`} inert={isSent}>
         {children}
 
-        <form action={action} noValidate className="mt-10 lg:mt-auto lg:pt-12">
+        <form ref={formRef} action={action} noValidate className="mt-10 lg:mt-auto lg:pt-12">
+          {/* Off-screen and out of the accessibility tree, so only something
+              filling in every input it finds will fill this one. */}
+          <input
+            type="text"
+            name={HONEYPOT_FIELD}
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            className="sr-only"
+          />
+
           {/*
            * Four fields into a two-column grid leaves the cell beside Phone
            * empty, because Note spans the pair and cannot fit beside it. That
@@ -80,6 +108,7 @@ export function EnquiryForm({ children }: { children: ReactNode }) {
               label={CONTACT.labels.name}
               autoComplete="name"
               isRequired
+              maxLength={CONTACT.limits.name}
               defaultValue={state.values.name}
               error={state.errors.name}
             />
@@ -89,6 +118,7 @@ export function EnquiryForm({ children }: { children: ReactNode }) {
               type="email"
               autoComplete="email"
               isRequired
+              maxLength={CONTACT.limits.email}
               defaultValue={state.values.email}
               error={state.errors.email}
             />
@@ -97,13 +127,16 @@ export function EnquiryForm({ children }: { children: ReactNode }) {
               label={CONTACT.labels.phone}
               type="tel"
               autoComplete="tel"
+              maxLength={CONTACT.limits.phone}
               defaultValue={state.values.phone}
+              error={state.errors.phone}
             />
             <Field
               name="note"
               label={CONTACT.labels.note}
               rows={2}
               isRequired
+              maxLength={CONTACT.limits.note}
               defaultValue={state.values.note}
               error={state.errors.note}
               className="lg:col-span-2"
@@ -111,7 +144,7 @@ export function EnquiryForm({ children }: { children: ReactNode }) {
           </div>
 
           {state.message ? (
-            <p role="alert" className="mt-8 font-sans text-label text-ink">
+            <p role="alert" className="mt-8 font-sans text-label text-rust">
               {state.message}
             </p>
           ) : null}
