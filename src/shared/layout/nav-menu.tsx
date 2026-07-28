@@ -1,9 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { NAV_ITEMS } from "@/shared/constants/nav-items";
 import { Container } from "@/shared/ui/container";
+
+/* Painted via mask + bg-moss, exactly as BranchBackdrop documents: inline SVG
+   would put ~30KB of traced path data in every page, <img> could not take the
+   token. The sprig is moss because the theme says moss, not the file. */
+const SPRIG: CSSProperties = {
+  "--shape-mask": "url(/shapes/moss-sprig.svg)",
+} as CSSProperties;
 
 export function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -82,6 +89,15 @@ export function NavMenu() {
         hidden={!isOpen}
         className="fixed inset-0 z-40 isolate overflow-hidden bg-bone pt-[var(--header-height)] text-ink"
       >
+        {/* Pressed into the corner: translate crops the stems off the page
+            edge, and its percentages resolve against the sprig's own box, so
+            the crop survives a resize. Fine line work, so the last links can
+            pass over it on a phone and stay legible. */}
+        <div
+          aria-hidden
+          style={SPRIG}
+          className="mask-shape pointer-events-none absolute right-0 bottom-0 -z-10 aspect-[154/264] h-[38vh] translate-x-[8%] translate-y-[10%] bg-moss lg:h-[55vh]"
+        />
         {/* Container rather than a bare gutter, so the links land on the same
             vertical as the wordmark above them at every width. h-full works
             because the panel is fixed inset-0: the rows divide the space below
