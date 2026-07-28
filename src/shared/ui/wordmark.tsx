@@ -1,9 +1,15 @@
 import { cn } from "@/shared/lib/cn";
 import { SITE } from "@/data/site";
 
+/**
+ * `inherit` emits no colour at all, so the mark takes currentColor from
+ * whatever is painting it. That is what lets the header drive both its marks
+ * from one property without this primitive having to know the header exists.
+ */
 const TONE_CLASS = {
   ink: "text-ink",
   bone: "text-bone",
+  inherit: "",
 } as const;
 
 interface WordmarkProps {

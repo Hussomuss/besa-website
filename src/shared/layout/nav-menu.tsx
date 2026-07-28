@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { NAV_ITEMS } from "@/shared/constants/nav-items";
+import { Container } from "@/shared/ui/container";
 
-export function MobileNav() {
+export function NavMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -56,16 +57,16 @@ export function MobileNav() {
   }, [isOpen]);
 
   return (
-    <div className="lg:hidden">
+    <div className="absolute top-0 right-[var(--menu-right)] flex h-[var(--header-height)] items-center">
       {/* -mr-3 with px-3 buys a 44px hit area while keeping the glyphs
           optically flush with the container gutter. */}
       <button
         ref={triggerRef}
         type="button"
         aria-expanded={isOpen}
-        aria-controls="mobile-nav-panel"
+        aria-controls="nav-panel"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-50 -mr-3 inline-flex min-h-11 min-w-11 items-center justify-end px-3 font-sans text-label uppercase"
+        className="relative z-50 -mr-3 inline-flex min-h-11 min-w-11 items-center justify-end px-3 font-sans text-nav font-semibold uppercase"
       >
         {isOpen ? "Close" : "Menu"}
       </button>
@@ -73,29 +74,33 @@ export function MobileNav() {
       {/* Rendered always, so aria-controls never points at a missing id. */}
       <div
         ref={panelRef}
-        id="mobile-nav-panel"
+        id="nav-panel"
         role="dialog"
         aria-modal="true"
         aria-label="Site navigation"
         tabIndex={-1}
         hidden={!isOpen}
-        className="fixed inset-0 z-40 bg-bone px-6 pt-28"
+        className="fixed inset-0 z-40 bg-bone pt-28 text-ink lg:pt-40"
       >
-        <nav aria-label="Primary">
-          <ul className="flex flex-col gap-2">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.label}>
-                <Link
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="inline-flex min-h-11 items-center font-display text-h3 font-normal"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* Container rather than a bare gutter, so the links land on the same
+            vertical as the wordmark above them at every width. */}
+        <Container>
+          <nav aria-label="Primary">
+            <ul className="flex flex-col gap-2">
+              {NAV_ITEMS.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    href={item.href}
+                    onClick={() => setIsOpen(false)}
+                    className="inline-flex min-h-11 items-center font-display text-h3 font-normal lg:text-h2"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </Container>
       </div>
     </div>
   );

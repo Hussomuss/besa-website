@@ -48,6 +48,28 @@
   --text-label--line-height: 1.2;
   --text-label--letter-spacing: 0.18em;
 
+  /*
+   * The header's menu trigger, and only that. Larger and heavier than
+   * --text-label because it is the one control on the site that has to stay
+   * findable on a photograph, where an 11px hairline cap sits under the
+   * image's own noise. Tracking is looser than a button's for the same reason:
+   * at semibold, 0.18em starts to read as separate letters rather than a word.
+   */
+  --text-nav: 1rem;
+  --text-nav--line-height: 1.2;
+  --text-nav--letter-spacing: 0.12em;
+
+  /*
+   * The numerals indexing a panel band. Larger than display type because they
+   * are read as a row across the band before any sentence is read, and set in
+   * the display face so they are the same drawing as the headings under them.
+   * Line height under 1 because a figure has no descender and the panel's top
+   * padding should measure to the digits, not to a phantom.
+   */
+  --text-numeral: clamp(3rem, 2.1rem + 3.6vw, 5.5rem);
+  --text-numeral--line-height: 0.86;
+  --text-numeral--letter-spacing: 0.01em;
+
   /* The two wordmark lines need different tracking: equal tracking on 4 and
      14 glyphs makes the descriptor wider than the mark. */
   --tracking-wordmark: 0.32em;
@@ -124,6 +146,155 @@
 }
 
 /*
+ * DELIBERATELY UNLAYERED. Everything below overrides utilities the header
+ * component wears — `relative`, `bg-bone` — and cascade layers outrank
+ * specificity, so inside @layer base these lose to @layer utilities however
+ * specific they are. Unlayered declarations beat every layer, which is the
+ * only way a page-level rule can countermand a component's own classes.
+ * Moving this back into @layer base silently restores an opaque header.
+ */
+
+/*
+ * How a page reaches the header. SiteHeader renders in the root layout, so a
+ * page cannot pass it a prop; instead Main states what it puts underneath and
+ * this reads it back out. `:has()` rather than a client component because the
+ * answer is static per page and known at paint.
+ *
+ * position: absolute takes the header out of flow, so main rises to the top
+ * of the document on its own — the overlap needs no negative margin on the
+ * page and no height subtracted anywhere.
+ *
+ * Safe only because the header is not sticky. It passes over the top of the
+ * document and nothing else, which is the one region whose contents the page
+ * author knows. A sticky header would travel over arbitrary content and no
+ * static declaration could stay true.
+ */
+body:has(main[data-ground]:not([data-ground="bone"])) > header {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  background: transparent;
+}
+
+/*
+ * One mark treatment, not one per end. The menu always moves to the side with
+ * no photograph under it, so the two marks can never stand on different
+ * things — which is the whole reason the side is declared rather than the
+ * colour of each end.
+ *
+ * A text-shadow rather than a plate behind the header: a plate veils the top
+ * of every photograph in order to protect two small elements, where the scrim
+ * buys contrast exactly where the glyphs are.
+ */
+body:has(main[data-ground="moss"]) > header {
+  --mark: var(--color-bone);
+}
+
+body:has(main[data-ground="photo"]) > header {
+  --mark: var(--color-bone);
+  --mark-shadow: var(--text-shadow-scrim);
+}
+
+/*
+ * Where the trigger sits, as its distance from the page's right edge. A span
+ * of 1/2 puts its right edge on the page's midpoint, which is where the home
+ * hero's photograph begins — so the control lands on the bone half rather than
+ * on the picture, and needs no tint to stay legible.
+ *
+ * The fractions are the complement of the span: the marks occupy the first f
+ * of the width, so the trigger sits (1 - f) in from the right. `full` needs no
+ * rule; SiteHeader's default already reproduces Container's own gutter.
+ *
+ * Add a value here and to MenuSpan together, or the type admits a span that
+ * silently does nothing.
+ */
+body:has(main[data-menu-span="2/3"]) > header {
+  --menu-right: calc(33.3333% + var(--header-gutter));
+}
+
+body:has(main[data-menu-span="7/12"]) > header {
+  --menu-right: calc(41.6667% + var(--header-gutter));
+}
+
+body:has(main[data-menu-span="1/2"]) > header {
+  --menu-right: calc(50% + var(--header-gutter));
+}
+
+body:has(main[data-menu-span="5/12"]) > header {
+  --menu-right: calc(58.3333% + var(--header-gutter));
+}
+
+body:has(main[data-menu-span="1/3"]) > header {
+  --menu-right: calc(66.6667% + var(--header-gutter));
+}
+
+/*
+ * The -lg attributes are emitted only when a value actually changes, so a page
+ * that is constant needs no rule here and the base one carries through. `full`
+ * is written out at lg because a page can widen back to it, which the base
+ * default cannot express once a fraction has been set.
+ */
+@media (width >= 64rem) {
+  body:has(main[data-ground-lg="bone"]) > header {
+    --mark: var(--color-ink);
+    --mark-shadow: none;
+  }
+
+  body:has(main[data-ground-lg="moss"]) > header {
+    --mark: var(--color-bone);
+    --mark-shadow: none;
+  }
+
+  body:has(main[data-ground-lg="photo"]) > header {
+    --mark: var(--color-bone);
+    --mark-shadow: var(--text-shadow-scrim);
+  }
+
+  body:has(main[data-menu-span-lg="full"]) > header {
+    --menu-right: var(--menu-gutter);
+  }
+
+  body:has(main[data-menu-span-lg="2/3"]) > header {
+    --menu-right: calc(33.3333% + var(--header-gutter));
+  }
+
+  body:has(main[data-menu-span-lg="7/12"]) > header {
+    --menu-right: calc(41.6667% + var(--header-gutter));
+  }
+
+  body:has(main[data-menu-span-lg="1/2"]) > header {
+    --menu-right: calc(50% + var(--header-gutter));
+  }
+
+  body:has(main[data-menu-span-lg="5/12"]) > header {
+    --menu-right: calc(58.3333% + var(--header-gutter));
+  }
+
+  body:has(main[data-menu-span-lg="1/3"]) > header {
+    --menu-right: calc(66.6667% + var(--header-gutter));
+  }
+}
+
+/*
+ * The open panel lays its own bone ground under both marks — it is fixed over
+ * the page at z-40 while the header sits at z-50 — so every photo treatment
+ * has to stand down or Close and the wordmark vanish into it.
+ *
+ * The span stands down with it. A span aligns the trigger to a vertical in the
+ * hero, and once the panel is open there is no hero to align to: it is a
+ * full-screen sheet at every width, so Close belongs in the page's own gutter.
+ * Only the trigger's resting position is the hero's business.
+ *
+ * Last in the file and at the same body:has() depth as the rules it
+ * countermands, so equal specificity is settled by source order.
+ */
+body:has(main) > header:has([aria-expanded="true"]) {
+  --mark: var(--color-ink);
+  --mark-shadow: none;
+  --menu-right: var(--menu-gutter);
+}
+
+/*
  * Hides the scrollbar on a snap row. Only used below lg, where the surface is
  * touch and the peeking next card is the affordance.
  */
@@ -149,6 +320,174 @@
  */
 @utility image-grade {
   filter: saturate(0.82) contrast(1.06) brightness(0.99);
+}
+
+/*
+ * Stone surfaces: a tonal mesh and a film grain, as two layers that know
+ * nothing about each other. Section wires them together; nothing else should
+ * apply them directly.
+ *
+ * Both are CSS. The reference for this treatment was a 13.5MB PNG, and these
+ * are a few hundred bytes that paint on the first frame — which is the whole
+ * argument, since a background is the one thing on a page that must never
+ * arrive after the type sitting on it.
+ *
+ * Layers are ordered under the content rather than over it: the mesh at -2,
+ * the grain at -1. Real grain would cover the type too, but a few percent of
+ * noise laid over Cormorant at display sizes eats exactly the hairlines that
+ * are the reason to specify Cormorant. isolation: isolate is what keeps a
+ * negative z-index above the element's own background instead of behind it.
+ */
+
+/*
+ * fractalNoise rather than turbulence: turbulence() returns the absolute
+ * value of the noise field, so wherever the field crosses zero it leaves a
+ * dark vein, and those veins are what make a naive CSS grain read as smoke.
+ *
+ * The colour matrix copies red into all three channels, because feTurbulence
+ * emits independent noise per channel and that is coloured static rather than
+ * grain, and pins alpha to 1 so strength is governed by one opacity we
+ * control rather than by a second noise field in the alpha channel.
+ *
+ * color-interpolation-filters='sRGB' is load-bearing. SVG filters run in
+ * linearRGB by default, so a mid-grey turbulence arrives nearer 0.73 once
+ * shown and soft light's premise — that mid grey is a no-op — stops holding.
+ * Without it the grain lightens every ground instead of leaning it both ways.
+ *
+ * stitchTiles makes the tile seamless; without it the repeat shows as a grid.
+ *
+ * background-size is in pixels rather than a percentage because grain is a
+ * physical property of a surface. A percentage would resize it with the
+ * viewport, making the same page fine-grained on a phone and coarse on a
+ * monitor.
+ */
+@utility surface-grain {
+  position: relative;
+  isolation: isolate;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 160px;
+    opacity: var(--surface-grain-opacity, 0.4);
+    mix-blend-mode: var(--surface-grain-blend, soft-light);
+  }
+}
+
+/*
+ * Three blooms, deliberately larger than the element so no stop ever lands
+ * inside the frame — a radial gradient is only mistakable for a light source
+ * while both its centre and its edge are off-screen.
+ *
+ * Fading to transparent is safe: gradient interpolation is premultiplied in
+ * every current engine, so the old grey fringe no longer appears.
+ */
+@utility surface-mesh {
+  background-color: var(--surface-base);
+  background-image:
+    radial-gradient(78% 62% at 16% 10%, var(--surface-1) 0%, transparent 60%),
+    radial-gradient(64% 58% at 88% 26%, var(--surface-2) 0%, transparent 64%),
+    radial-gradient(92% 74% at 58% 102%, var(--surface-3) 0%, transparent 68%);
+}
+
+/*
+ * Nine small blooms smeared by a blur, rather than three placed exactly. The
+ * blur is what does the work: it destroys the evidence that this is a stack
+ * of radial gradients, which is the one thing that leaves the placed mesh
+ * still readable as a gradient on a wide screen.
+ *
+ * filter on a layer of our own rather than backdrop-filter. A backdrop blur
+ * resamples everything painted behind the element and re-runs on every scroll
+ * frame, which is worst on the phones this site is designed for first, and it
+ * samples with edge clamping so it bleeds at the borders. Blurring our own
+ * layer costs one offscreen pass and composites like any other paint.
+ *
+ * The price is overflow: hidden. Blur fades a layer's own edges to
+ * transparent, so the layer is grown past its box by twice the radius and the
+ * host clips it — which means a host wearing this cannot also carry a
+ * decoration that deliberately overhangs, BranchBackdrop being the one in the
+ * repo today. It also rasterises a surface several times the host's area, so
+ * this is the expensive one of the two meshes.
+ */
+@utility surface-scatter {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--surface-base);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: -240px;
+    z-index: -2;
+    filter: blur(120px);
+    background-image:
+      radial-gradient(at 90.3% 87.6%, var(--surface-3) 0px, transparent 50%),
+      radial-gradient(at 47.3% 49.4%, var(--surface-1) 0px, transparent 50%),
+      radial-gradient(at 84.1% 67.2%, var(--surface-2) 0px, transparent 50%),
+      radial-gradient(at 11.5% 62.9%, var(--surface-2) 0px, transparent 50%),
+      radial-gradient(at 66.1% 41.9%, var(--surface-1) 0px, transparent 50%),
+      radial-gradient(at 21.2% 38.3%, var(--surface-2) 0px, transparent 50%),
+      radial-gradient(at 8.2% 85.9%, var(--surface-3) 0px, transparent 50%),
+      radial-gradient(at 14.1% 14.2%, var(--surface-2) 0px, transparent 50%),
+      radial-gradient(at 84.6% 19.4%, var(--surface-2) 0px, transparent 50%);
+  }
+}
+
+/*
+ * The palettes. These set custom properties and nothing else, which keeps
+ * them independent of the two geometries above: either can be worn with
+ * either. Sand with the placed mesh and moss with the scatter is the pairing
+ * the site uses, but that is a choice rather than a coupling.
+ *
+ * Mixed from the tokens rather than picked, so a bloom cannot drift away from
+ * the brand colour it is meant to be a shading of.
+ *
+ * Grain weight differs per palette on arithmetic rather than on taste. Soft
+ * light moves a backdrop by roughly b(1-b), which is a few percent near white
+ * and over twenty down in moss's midtones, so one shared opacity would be
+ * invisible on one ground and coarse on the other.
+ */
+
+/* Cool. A twentieth of moss in the mid bloom and a fifth in the deep one:
+   moss is the only cool token in the palette, and it is the difference
+   between limestone and beige. */
+@utility surface-sand {
+  --surface-base: var(--color-sand);
+  --surface-grain-opacity: 0.4;
+  --surface-1: color-mix(in srgb, var(--color-bone) 65%, var(--color-sand));
+  --surface-2: color-mix(in srgb, var(--color-moss) 6%, var(--color-sand));
+  --surface-3: color-mix(in srgb, var(--color-moss) 20%, var(--color-sand));
+}
+
+/* Overlay rather than soft light: soft light's effect is proportional to the
+   backdrop's distance from black, and moss is dark enough that it arrives
+   washed out. Overlay keeps the contrast and the low opacity pays for it. */
+@utility surface-moss {
+  --surface-base: var(--color-moss);
+  --surface-grain-blend: overlay;
+  --surface-grain-opacity: 0.2;
+  --surface-1: color-mix(in srgb, var(--color-bone) 13%, var(--color-moss));
+  --surface-2: color-mix(in srgb, var(--color-sand) 9%, var(--color-moss));
+  --surface-3: color-mix(in srgb, var(--color-ink) 45%, var(--color-moss));
+}
+
+/*
+ * A deeper moss, for a panel that has to separate from a moss panel it is
+ * touching. With no rule permitted between them the tone change is the only
+ * edge there is, so it has to be readable as a decision rather than as a
+ * gradient banding artefact — 28% is the least that reads as deliberate.
+ *
+ * Mixed rather than picked, the same as the surface blooms above: a panel
+ * shade cannot then drift away from the colour it is a shading of, and the
+ * palette stays the four tokens it was given.
+ */
+@utility bg-moss-deep {
+  background-color: color-mix(in srgb, var(--color-ink) 28%, var(--color-moss));
 }
 
 /*

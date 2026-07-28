@@ -1,3 +1,4 @@
+import { Main } from "@/shared/layout/main";
 import { Container } from "@/shared/ui/container";
 
 export default function LegalLayout({
@@ -6,8 +7,8 @@ export default function LegalLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <main className="flex-1 py-32">
+    <Main ground="bone" className="py-32">
       <Container size="prose">{children}</Container>
-    </main>
+    </Main>
   );
 }

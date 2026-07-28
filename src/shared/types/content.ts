@@ -52,6 +52,18 @@ export interface StatementContent extends SectionContent {
   cta?: CtaContent;
 }
 
+/**
+ * One panel of a numbered band. The panel's ground is presentation and is
+ * decided by position, not stated here — otherwise the copy would be carrying
+ * a colour, and reordering the items would recolour the band.
+ */
+export interface NumberedItem {
+  heading: readonly HeadingSegment[];
+  body: string;
+  /** Only the light panel carries one. */
+  image?: ImageContent;
+}
+
 export interface FaqItem {
   question: string;
   answer: string;

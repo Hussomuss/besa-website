@@ -27,7 +27,13 @@ export function Hero() {
         className="scrim-hero absolute inset-0 lg:hidden"
       />
 
-      <Container className="relative flex min-h-[calc(100svh-var(--header-height))] flex-col justify-end pt-16 pb-16 text-bone lg:grid lg:grid-cols-12 lg:items-center lg:py-24 lg:text-ink">
+      {/*
+        A whole viewport, not a viewport less the header: the header floats on
+        the hero rather than sitting above it. --header-height is reserved as
+        padding at the top instead of subtracted from the height, which is what
+        keeps the copy clear of the marks at lg where it is vertically centred.
+      */}
+      <Container className="relative flex min-h-svh flex-col justify-end pt-[var(--header-height)] pb-16 text-bone lg:grid lg:grid-cols-12 lg:items-center lg:pb-24 lg:text-ink">
         <div className="max-lg:text-shadow-scrim lg:col-span-5">
           <Heading as="h1" size="display" className="text-balance">
             {heading.map((segment) =>
