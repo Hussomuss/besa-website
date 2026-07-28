@@ -202,6 +202,135 @@
     background-color: var(--color-moss);
     color: var(--color-bone);
   }
+
+  /*
+   * The document's scrollbar, and the only piece of browser chrome this site
+   * dresses. Thumb only: a painted track is a rule the full height of the
+   * window down the right edge of every page, and nothing else here separates
+   * with a line.
+   *
+   * It is the same problem :focus-visible solves above — a moss mark is
+   * invisible on a moss ground — but it cannot take the same answer.
+   * currentColor works for a focus ring because the ring is drawn inside the
+   * section it belongs to. A scrollbar is drawn on the canvas, which the body
+   * propagates, so the ground under it is the *document's* and does not change
+   * as sections pass. That makes it a per-page question, which is why the
+   * correction sits with the moss ground further down rather than here.
+   *
+   * 70% rather than solid: alpha is what keeps this one declaration instead of
+   * a second colour, and it lands at 3.5:1 on bone — enough for a control that
+   * has to be found, short of a saturated green stroke a screen tall.
+   *
+   * scrollbar-gutter because the width is reserved either way once the bar is
+   * styled: a styled scrollbar is no longer the platform's overlay one, so it
+   * takes layout width on macOS too. Reserving it always costs nothing further
+   * and buys back the jump when nav-menu locks the body on open.
+   */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-moss) 70%, transparent)
+      transparent;
+    scrollbar-gutter: stable;
+  }
+
+  /*
+   * ONE DISSOLVE, FOR EVERY NAVIGATION.
+   *
+   * The pages here are told apart by ground before they are told apart by
+   * anything else — photograph, moss, bone — so a page change is a change of
+   * plate, and a dissolve is what a plate change looks like. There is no
+   * directional slide, and that is a measurement rather than a taste: nothing
+   * on this site moves more than 16px unclipped. `settle` is opacity alone,
+   * Reveal travels 12px, the panel rows 16px, and the button's plane is
+   * clipped so it cannot be seen to travel at all. The 60px slide the Next
+   * guide reaches for would be four times the largest movement on the site.
+   *
+   * Two groups, styled identically. The ViewTransition in the root layout
+   * puts `main` in a group of its own as `.page`, and everything it does not
+   * cover — the header, the footer, the body's own ground — stays in `root`.
+   * They are given one duration and one curve because they are one gesture;
+   * the split is an artefact of how the snapshot is taken, and must not be
+   * visible.
+   *
+   * The boundary cannot opt out of naming itself, which is the thing that is
+   * easy to get wrong here: React only starts a view transition when a class
+   * has actually been applied to a host instance, so a boundary that
+   * deactivates its own name does not fall back to a plain root dissolve — it
+   * cancels the transition outright and the navigation is an ordinary cut.
+   *
+   * The header is in `root` and that is deliberate, and it is where this
+   * departs from the guide, which
+   * pins the header with `animation: none`. The header takes its colour from
+   * `body:has(main[data-ground])` further down this file, and the real DOM is
+   * the new page from the first frame — so `--mark` flips while the old ground
+   * is still painted. Anchoring would show ink marks over moss for the whole
+   * of a contact-to-services navigation. The guide anchors a header to protect
+   * a spatial anchor from a slide; this one never moves, so there is nothing
+   * to protect and the colour gets to dissolve with everything else.
+   *
+   * 420ms lands between the field line's 400 and the panel rows' 500, so the
+   * largest transition on the site is still in key with the smallest.
+   */
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  ::view-transition-image-pair(root),
+  ::view-transition-old(.page),
+  ::view-transition-new(.page),
+  ::view-transition-image-pair(.page) {
+    animation-duration: 420ms;
+    animation-timing-function: var(--ease-editorial);
+  }
+
+  /*
+   * The page group is pinned rather than animated. A group interpolates
+   * between the old element's box and the new one's, and `main` is several
+   * thousand pixels tall on the home page and under a thousand on contact —
+   * so left alone it spends the whole 420ms squashing the outgoing page into
+   * the incoming one's height. Pinned, the box takes the new page's geometry
+   * at once and the two snapshots simply cross-dissolve inside it, which is
+   * the only thing that was ever wanted from it. Its position needs no
+   * animating either: `main` starts at the same place on every page.
+   */
+  ::view-transition-group(.page) {
+    animation: none;
+  }
+
+  /*
+   * The midpoint of a crossfade is a 50/50 average of two grounds, which reads
+   * as a smear rather than as either page. Blurring the pair — both snapshots
+   * together, so they stay registered — turns that midpoint into depth of
+   * field. 3px, and no more: this is a soft focus, not a transition of its own.
+   *
+   * It is also not an import. The moss ground on this site is nine radial
+   * gradients under a 120px blur, so blur is already the material the page is
+   * built from.
+   */
+  ::view-transition-image-pair(root),
+  ::view-transition-image-pair(.page) {
+    animation-name: via-blur;
+    animation-fill-mode: both;
+  }
+
+  @keyframes via-blur {
+    40% {
+      filter: blur(3px);
+    }
+  }
+
+  /*
+   * The whole gesture is a crossfade, so removing the duration leaves the
+   * browser's own behaviour — an instant swap — rather than a broken
+   * animation. `*` covers the root group and any name added later.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-image-pair(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+      animation-duration: 0s !important;
+      animation-delay: 0s !important;
+    }
+  }
 }
 
 /*
@@ -384,6 +513,25 @@ body:has(main[data-ground="moss"]:not([data-ground-lg])) {
   --surface-3: color-mix(in srgb, var(--color-ink) 45%, var(--color-moss));
 
   background-color: var(--color-moss);
+}
+
+/*
+ * And the scrollbar turns over with it. This is the one place the canvas stops
+ * being bone, so it is the one place the moss thumb declared in the base layer
+ * would be a moss mark on moss.
+ *
+ * Anchored on html rather than body because the viewport's scrollbar is taken
+ * from the root element — scrollbar-color does not propagate up from the body
+ * the way background-color does, so the rule above cannot carry it. Unlayered,
+ * like its neighbour, which is what puts it past the base layer.
+ *
+ * Bone at 55% is the mirror of the 70% moss it replaces: 3.3:1 on moss against
+ * 3.5:1 on bone, so the bar has the same presence on both grounds rather than
+ * the same colour.
+ */
+html:has(main[data-ground="moss"]:not([data-ground-lg])) {
+  scrollbar-color: color-mix(in srgb, var(--color-bone) 55%, transparent)
+    transparent;
 }
 
 body:has(main[data-ground="moss"]:not([data-ground-lg]))::before {
