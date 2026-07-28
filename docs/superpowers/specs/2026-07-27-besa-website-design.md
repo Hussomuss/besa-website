@@ -263,6 +263,14 @@ the first intersection so elements never re-animate. Transitions `opacity` and
 siblings. Under `prefers-reduced-motion: reduce` the element renders visible with
 no transition.
 
+The observer watches one axis. An intersection ratio is an area — horizontal
+fraction times vertical — so the root is widened past both sides by a flat
+`9999px`, and the threshold then means 12% of the element's own height. This is
+what lets the primitive be used on an item inside a horizontal scroller, where
+siblings sit off to the side by design: the services snap row would otherwise
+score its second card on its peek alone, revealing or not depending on the
+handset's width, and its third card on nothing at all.
+
 ## 6. Content model
 
 `src/shared/types/content.ts` holds the interfaces. `src/data/*` holds the
