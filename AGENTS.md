@@ -26,6 +26,14 @@ Compose sections as heading, supporting text, action.
 
 **Copy lives in `src/data/`.** No user-facing string appears in a component.
 
+**One button, site-wide.** Every call to action uses `shared/ui/button`. Never
+introduce a second component or a bespoke class with its own hover behaviour,
+and never restyle a button inline so it animates differently. The two variants
+are the same button on opposite grounds: `default` fills ink on bone, `inverse`
+fills bone on moss. Where a whole card is already a link and cannot contain a
+nested one, use the exported `buttonClasses()` on a span rather than inventing
+a lookalike. `link-underline` is for navigation links only, not actions.
+
 # Architecture
 
 `src/app` holds routing files only: a `metadata` export and a composition of

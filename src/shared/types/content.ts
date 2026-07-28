@@ -42,3 +42,21 @@ export interface SectionContent {
   heading: readonly HeadingSegment[];
   lead?: string;
 }
+
+export interface AudienceContent extends SectionContent {
+  cta: CtaContent;
+  images: readonly ImageContent[];
+}
+
+export interface StatementContent extends SectionContent {
+  cta?: CtaContent;
+}
+
+export interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export interface FaqContent extends SectionContent {
+  items: readonly FaqItem[];
+}
