@@ -62,10 +62,13 @@ because the file does.
 Placement, inside the panel and before `Container` in source:
 
 - `aria-hidden`, `pointer-events-none`, `absolute -z-10`.
-- Anchored bottom-right with negative offsets — on the order of
-  `-right-[6%] -bottom-[8%]` of the sprig's own box — so the stems run off
-  the page edge like a pressed specimen tucked into the corner. Exact
-  percentages are tuned visually at implementation.
+- Anchored `right-0 bottom-0`, then pushed past the edge with a translate —
+  on the order of `translate-x-[8%] translate-y-[10%]`, percentages of the
+  sprig's own box — so the stems run off the page edge like a pressed
+  specimen tucked into the corner. Translate rather than negative insets
+  because its percentages resolve against the sprig, not the viewport, so
+  the crop survives a resize. Exact values are tuned visually at
+  implementation.
 - `aspect-[154/264]` matching the viewBox, height `~55vh` at `lg` and `~38vh`
   below it. On a phone the last link or two pass over the sprig's fine
   strokes; the drawing is thin line work on bone, so the ink labels stay
