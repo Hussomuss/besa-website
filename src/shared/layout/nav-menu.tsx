@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { NAV_ITEMS } from "@/shared/constants/nav-items";
+import { cn } from "@/shared/lib/cn";
 import { Container } from "@/shared/ui/container";
 
 /* Painted via mask + bg-moss, exactly as BranchBackdrop documents: inline SVG
@@ -78,7 +79,12 @@ export function NavMenu() {
         {isOpen ? "Close" : "Menu"}
       </button>
 
-      {/* Rendered always, so aria-controls never points at a missing id. */}
+      {/* Always mounted, so aria-controls never dangles and the close fade has
+          something to run on. visibility rides the transition: it flips only
+          after the fade, and while hidden the panel is out of the tab order
+          and the accessibility tree, exactly as the hidden attribute was.
+          Closed-state children reset on delay-200 duration-0 — silently, one
+          fade after the panel has gone — so every open staggers afresh. */}
       <div
         ref={panelRef}
         id="nav-panel"
@@ -86,17 +92,27 @@ export function NavMenu() {
         aria-modal="true"
         aria-label="Site navigation"
         tabIndex={-1}
-        hidden={!isOpen}
-        className="fixed inset-0 z-40 isolate overflow-hidden bg-bone pt-[var(--header-height)] text-ink"
+        className={cn(
+          "fixed inset-0 z-40 isolate overflow-hidden bg-bone pt-[var(--header-height)] text-ink transition-[opacity,visibility]",
+          isOpen
+            ? "visible opacity-100 duration-300"
+            : "invisible opacity-0 duration-200",
+        )}
       >
         {/* Pressed into the corner: translate crops the stems off the page
             edge, and its percentages resolve against the sprig's own box, so
             the crop survives a resize. Fine line work, so the last links can
-            pass over it on a phone and stay legible. */}
+            pass over it on a phone and stay legible. It arrives last and from
+            slightly lower, like the rows. */}
         <div
           aria-hidden
           style={SPRIG}
-          className="mask-shape pointer-events-none absolute right-0 bottom-0 -z-10 aspect-[154/264] h-[38vh] translate-x-[8%] translate-y-[10%] bg-moss lg:h-[55vh]"
+          className={cn(
+            "mask-shape pointer-events-none absolute right-0 bottom-0 -z-10 aspect-[154/264] h-[38vh] translate-x-[8%] bg-moss transition-[translate,opacity] lg:h-[55vh]",
+            isOpen
+              ? "translate-y-[10%] opacity-100 delay-[260ms] duration-700 ease-editorial"
+              : "translate-y-[14%] opacity-0 delay-200 duration-0 motion-reduce:translate-y-[10%]",
+          )}
         />
         {/* Container rather than a bare gutter, so the links land on the same
             vertical as the wordmark above them at every width. h-full works
@@ -105,12 +121,22 @@ export function NavMenu() {
         <Container className="h-full">
           <nav aria-label="Primary" className="h-full">
             <ul className="flex h-full flex-col pb-[max(1.5rem,env(safe-area-inset-bottom))]">
-              {NAV_ITEMS.map((item) => (
+              {NAV_ITEMS.map((item, index) => (
                 <li key={item.label} className="flex flex-1 items-center">
                   <Link
                     href={item.href}
                     onClick={() => setIsOpen(false)}
-                    className="inline-flex min-h-11 items-center font-display text-h3 font-normal lg:text-h2"
+                    /* The one inline style: the stagger is arithmetic on the
+                       row index, which no static class can express. */
+                    style={{
+                      transitionDelay: isOpen ? `${60 + index * 40}ms` : "200ms",
+                    }}
+                    className={cn(
+                      "inline-flex min-h-11 items-center font-display text-h3 font-normal transition-[translate,opacity] lg:text-h2",
+                      isOpen
+                        ? "translate-y-0 opacity-100 duration-500 ease-editorial"
+                        : "translate-y-4 opacity-0 duration-0 motion-reduce:translate-y-0",
+                    )}
                   >
                     {item.label}
                   </Link>
