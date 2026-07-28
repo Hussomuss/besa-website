@@ -74,7 +74,7 @@ export function NavMenu() {
         aria-expanded={isOpen}
         aria-controls="nav-panel"
         onClick={() => setIsOpen(!isOpen)}
-        className="relative z-50 -mr-3 inline-flex min-h-11 min-w-11 items-center justify-end px-3 font-sans text-nav font-semibold uppercase"
+        className="relative z-50 -mr-3 inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-end px-3 font-sans text-nav font-semibold uppercase"
       >
         {isOpen ? "Close" : "Menu"}
       </button>
@@ -132,7 +132,7 @@ export function NavMenu() {
                       transitionDelay: isOpen ? `${60 + index * 40}ms` : "200ms",
                     }}
                     className={cn(
-                      "inline-flex min-h-11 items-center font-display text-h3 font-normal transition-[translate,opacity] lg:text-h2",
+                      "link-underline inline-flex min-h-11 items-center font-display text-h3 font-normal transition-[translate,opacity] lg:text-h2",
                       isOpen
                         ? "translate-y-0 opacity-100 duration-500 ease-editorial"
                         : "translate-y-4 opacity-0 duration-0 motion-reduce:translate-y-0",
