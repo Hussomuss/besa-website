@@ -64,6 +64,19 @@
 
   --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
 
+  /*
+   * The button's two curves. Firm is medium stiffness and critically damped:
+   * it spends its travel evenly rather than front-loading it, so the rising
+   * plane reads as having mass rather than speed. It does not overshoot
+   * because it cannot — the plane is clipped by the button, so a curve that
+   * passes scaleY(1) merely arrives early and holds against the top edge.
+   *
+   * The label is the one part of the gesture that is not clipped, so it is
+   * the only place a spring survives. That is what --ease-lift is for.
+   */
+  --ease-rise: cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-lift: cubic-bezier(0.34, 1.5, 0.64, 1);
+
   /* Opacity only. A scale-in crops the composition for its first second and
      forces "keep the subject inside 8% of every edge" into the photo brief. */
   --animate-settle: settle 900ms var(--ease-editorial) both;
@@ -163,36 +176,79 @@
 }
 
 /*
- * The site's one button behaviour: a fill that rises from the baseline.
+ * The site's one button behaviour: a plane of the partner colour rises from
+ * the baseline, and the label is lifted by it.
  *
- * The fill colour is a variable so light and dark grounds share a single
- * mechanism rather than each inventing its own hover. It also responds to an
- * ancestor .group, so a button sitting inside a card-wide link animates when
- * the card is hovered.
+ * The plane's colour is a variable so every ground shares one mechanism
+ * rather than each inventing its own. Both the plane and the lift also answer
+ * to an ancestor .group, so a button inside a card-wide link animates with
+ * the card.
+ *
+ * Hover is gated on (hover: hover) — Tailwind v4 gates its own hover variant
+ * the same way — because iOS latches :hover after a tap until you touch
+ * something else, which would leave a button lit long after the finger has
+ * gone. :active carries the whole gesture on touch, which is why every rule
+ * below is written twice.
+ *
+ * The lift needs an element of its own, so anything wearing this class must
+ * wrap its label in a single span.
  */
-@utility wipe {
+@utility rise {
   position: relative;
   isolation: isolate;
   overflow: hidden;
+
+  /* Without these a phone feels wrong regardless of the curve: Android paints
+     a grey flash over the fill, iOS waits 300ms for a possible double-tap,
+     and a long press selects the label instead of showing the pressed
+     state. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
 
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: -1;
-    background-color: var(--wipe-fill, var(--color-ink));
+    background-color: var(--rise, var(--color-moss));
     transform: scaleY(0);
     transform-origin: bottom;
-    transition: transform 500ms var(--ease-editorial);
+    transition: transform 440ms var(--ease-rise);
   }
 
-  &:hover::before,
-  .group:hover &::before {
+  /* The 70ms delay is the whole difference between the plane appearing to
+     push the label and the two appearing to be wired to the same switch. */
+  & > span {
+    display: inline-block;
+    transition: transform 520ms var(--ease-lift) 70ms;
+  }
+
+  &:active::before,
+  .group:active &::before {
     transform: scaleY(1);
   }
 
+  &:active > span,
+  .group:active & > span {
+    transform: translateY(-2px);
+  }
+
+  @media (hover: hover) {
+    &:hover::before,
+    .group:hover &::before {
+      transform: scaleY(1);
+    }
+
+    &:hover > span,
+    .group:hover & > span {
+      transform: translateY(-2px);
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    &::before {
+    &::before,
+    & > span {
       transition: none;
     }
   }

@@ -43,10 +43,15 @@ export function Hero() {
           <Text size="lead" className="mt-6 max-w-[26rem] lg:mt-8">
             {lead}
           </Text>
+          {/* The only responsive ground on the site: below lg the copy sits on
+              the scrimmed photograph, at lg the photo moves right and the copy
+              is on bone. The colour follows, bone to ink, with nothing said
+              about either. */}
           <Button
             href={cta.href}
-            variant="default"
-            className="mt-8 max-lg:[--wipe-fill:var(--color-bone)] max-lg:border-bone/40 max-lg:text-bone max-lg:hover:text-ink max-sm:w-full lg:mt-12"
+            on={{ base: "image", lg: "bone" }}
+            width="full"
+            className="mt-8 lg:mt-12"
           >
             {cta.label}
           </Button>

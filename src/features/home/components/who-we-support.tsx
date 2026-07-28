@@ -56,7 +56,7 @@ export function WhoWeSupport() {
 
               <Text className="mt-6 max-w-md">{lead}</Text>
 
-              <Button href={cta.href} className="mt-9 self-start">
+              <Button href={cta.href} on="sand" width="full" className="mt-9">
                 {cta.label}
               </Button>
             </div>

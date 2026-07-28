@@ -26,13 +26,24 @@ Compose sections as heading, supporting text, action.
 
 **Copy lives in `src/data/`.** No user-facing string appears in a component.
 
-**One button, site-wide.** Every call to action uses `shared/ui/button`. Never
-introduce a second component or a bespoke class with its own hover behaviour,
-and never restyle a button inline so it animates differently. The two variants
-are the same button on opposite grounds: `default` fills ink on bone, `inverse`
-fills bone on moss. Where a whole card is already a link and cannot contain a
-nested one, use the exported `buttonClasses()` on a span rather than inventing
-a lookalike. `link-underline` is for navigation links only, not actions.
+**One component, one gesture, many grounds.** Every call to action uses
+`shared/ui/button`. Never introduce a second component or a bespoke class with
+its own hover behaviour, and never restyle a button inline so it animates
+differently. `emphasis`, `colour`, `on` and `width` are configuration, not new
+buttons; if a call site wants behaviour none of them expresses, the answer is
+to change the component, not to override it.
+
+The button is filled at rest, because hover does not exist on a touch screen
+and a button whose identity is a hover effect never finishes on a phone. The
+gesture is a plane of the fill's tonal partner rising from the baseline.
+
+`on` is required and states the ground, which is what makes an illegible
+pairing fail to compile. It also chooses the colour: the default is always
+maximum contrast against that ground, so `colour` is written only to ask for
+something else. Where a whole card is already a link and cannot contain a
+nested one, use the exported `buttonClasses()` on a span, wrapping the label in
+its own span so the lift has something to animate. `link-underline` is for
+navigation links only, not actions.
 
 # Architecture
 

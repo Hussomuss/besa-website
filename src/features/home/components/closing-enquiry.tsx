@@ -30,7 +30,13 @@ export function ClosingEnquiry() {
       </Heading>
 
       {cta ? (
-        <Button href={cta.href} className="mt-10">
+        <Button
+          href={cta.href}
+          on="bone"
+          colour="moss"
+          width="full"
+          className="mt-10"
+        >
           {cta.label}
         </Button>
       ) : null}

@@ -39,7 +39,12 @@ export function ServiceCard({ service }: ServiceCardProps) {
       {/* The wrapper carries mt-auto so the button keeps a minimum gap above
           it; mt-auto on the button itself would override any margin. */}
       <div className="mt-auto pt-8">
-        <span className={buttonClasses("inverse")}>Learn more</span>
+        {/* Outline, not contained: three filled blocks down the moss band is
+            too much weight for a secondary action inside a card that is
+            already a link. The inner span is what the label lift animates. */}
+        <span className={buttonClasses({ on: "moss" }, "outline")}>
+          <span>Learn more</span>
+        </span>
       </div>
     </Link>
   );

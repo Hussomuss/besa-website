@@ -7,7 +7,9 @@ export default function NotFound() {
       <Heading as="h1" size="h2" className="text-balance">
         This page does not exist.
       </Heading>
-      <Button href="/">Return home</Button>
+      <Button href="/" on="bone">
+        Return home
+      </Button>
     </main>
   );
 }

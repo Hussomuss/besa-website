@@ -14,7 +14,7 @@ export default function Error({
       <Heading as="h1" size="h2" className="text-balance">
         Something went wrong.
       </Heading>
-      <Button type="button" onClick={() => unstable_retry()}>
+      <Button type="button" on="bone" onClick={() => unstable_retry()}>
         Try again
       </Button>
     </main>

@@ -80,7 +80,7 @@ type Width = "auto" | "full";
 | `on` | required | The ground the button sits on |
 | `emphasis` | `"contained"` | |
 | `colour` | follows `on` | Maximum contrast against the ground |
-| `width` | `"auto"` | |
+| `width` | `"auto"` | `full` is `w-full`, nothing else |
 
 ### 3.1 Emphasis
 
@@ -117,14 +117,14 @@ prop, and yielding bone on mobile and ink on desktop without stating either.
 
 ### 3.4 Width
 
-| | Classes |
-|---|---|
-| `auto` | intrinsic |
-| `full` | `w-full sm:max-w-[22rem]` |
+`auto` is intrinsic. `full` is `w-full` and nothing else — no cap, no
+breakpoint. It spans whatever container it is given, which is the five-column
+copy tile on the hero, the sand copy tile on who-we-support, and the
+six-column text column on the closing enquiry. Not the viewport in any of the
+three.
 
-`full` is genuinely full-bleed on a phone and a deliberate 22rem block above
-`sm` — roughly 60% of the hero's copy tile, 70% of the sand tile, half the FAQ
-column. Unprefixed style is the phone one, per the mobile-first rule.
+It is a prop rather than a `className` so that the two answers stay the only
+two answers, and a call site cannot quietly introduce a third width.
 
 ## 4. Rigidity
 
@@ -192,7 +192,7 @@ unchanged.
 
 | Call site | `on` | `emphasis` | `colour` | `width` |
 |---|---|---|---|---|
-| Hero | `{ base: "image", lg: "bone" }` | contained | default | full |
+| Hero | `{ base: "image", lg: "bone" }` | contained | default (`bone` → `ink`) | full |
 | Who we support | `sand` | contained | default (`ink`) | full |
 | Service card ×3 | `moss` | **outline** | default (`bone`) | auto |
 | Closing enquiry | `bone` | contained | `moss` | full |
