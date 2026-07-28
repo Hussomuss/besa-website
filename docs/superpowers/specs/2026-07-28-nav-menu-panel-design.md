@@ -100,6 +100,11 @@ remain. The header-ground rule `header:has([aria-expanded="true"])` keys off
 the trigger, not the panel, so the mark flip is unaffected by the panel
 staying mounted.
 
+Hover is the house gesture and nothing else: the links take `link-underline`,
+the hairline that draws in from the left — defined for navigation links and,
+until now, applied to none. The trigger gains `cursor-pointer`, which
+Tailwind v4's preflight no longer puts on buttons.
+
 ## What must not change
 
 - Focus trap, Escape handling, focus restore to the trigger, scroll lock.
