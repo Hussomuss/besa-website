@@ -116,18 +116,6 @@
 }
 
 /*
- * Decorative line art carried as an alpha mask rather than a picture, so the
- * colour comes from background-color and the same asset works on any ground.
- * Unlike mask-shape this keeps the artwork's aspect ratio.
- */
-@utility mask-art {
-  mask-image: var(--art-mask);
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: left center;
-}
-
-/*
  * House grade for photography. Stock images arrive in wildly different
  * treatments; pulling every one toward a desaturated, slightly warm render
  * is what makes a set of unrelated photos look art-directed.
