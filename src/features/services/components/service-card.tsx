@@ -24,10 +24,10 @@ export function ServiceCard({ service }: ServiceCardProps) {
     <Link href={href} className="group flex h-full flex-col">
       <ImageFrame
         src={image.src}
-        alt={image.alt}
+        alt=""
         ratio="square"
-        sizes="(min-width: 1024px) 30vw, 100vw"
-        className="transition-transform duration-700 ease-editorial group-hover:scale-[1.02]"
+        sizes="(min-width: 1536px) 456px, (min-width: 1024px) 30vw, (min-width: 640px) 58vw, 78vw"
+        className="transition-transform duration-700 ease-editorial group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
       />
 
       <Heading as="h3" size="h3" className="mt-8 max-w-xs">

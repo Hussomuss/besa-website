@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "@/shared/ui/button";
+import { Heading } from "@/shared/ui/heading";
+
 export default function Error({
   unstable_retry,
 }: {
@@ -7,15 +10,13 @@ export default function Error({
   unstable_retry: () => void;
 }) {
   return (
-    <main className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-32">
-      <h1 className="font-display text-h2 font-light">Something went wrong.</h1>
-      <button
-        type="button"
-        onClick={() => unstable_retry()}
-        className="font-sans text-label uppercase underline"
-      >
+    <main className="flex flex-1 flex-col items-center justify-center gap-10 px-6 py-32 text-center">
+      <Heading as="h1" size="h2" className="text-balance">
+        Something went wrong.
+      </Heading>
+      <Button type="button" onClick={() => unstable_retry()}>
         Try again
-      </button>
+      </Button>
     </main>
   );
 }

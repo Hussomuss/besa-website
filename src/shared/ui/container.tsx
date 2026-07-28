@@ -3,7 +3,7 @@ import { cn } from "@/shared/lib/cn";
 
 const SIZE_CLASS = {
   page: "max-w-page",
-  prose: "max-w-2xl",
+  prose: "max-w-[60ch]",
 } as const;
 
 interface ContainerProps {

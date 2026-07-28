@@ -17,8 +17,8 @@ export function Hero() {
         alt={image.alt}
         isPriority
         hasIntro
-        sizes="(min-width: 1024px) 52vw, 100vw"
-        className="absolute inset-0 aspect-auto h-full w-full lg:left-auto lg:w-[52%]"
+        sizes="(min-width: 1024px) 50vw, 100vw"
+        className="absolute inset-0 aspect-auto h-full w-full lg:left-auto lg:w-1/2"
       />
 
       {/* Scrim carries the copy on mobile only, where text sits on the photo. */}
@@ -40,7 +40,7 @@ export function Hero() {
               ),
             )}
           </Heading>
-          <Text size="lead" className="mt-6 max-w-[26rem] text-balance lg:mt-8">
+          <Text size="lead" className="mt-6 max-w-[26rem] lg:mt-8">
             {lead}
           </Text>
           <Button

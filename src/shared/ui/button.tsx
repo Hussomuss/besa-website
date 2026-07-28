@@ -18,8 +18,14 @@ const VARIANT_CLASS = {
     "[--wipe-fill:var(--color-bone)] border-bone/40 text-bone hover:border-bone hover:text-ink group-hover:border-bone group-hover:text-ink",
 } as const;
 
+/**
+ * The reduced-motion gate is load-bearing. globals.css stops the wipe's
+ * transition under reduced motion, so the ink fill snaps to covered instantly;
+ * without gating the colour transition too, the label would crawl from ink to
+ * bone over half a second on top of an already-ink ground.
+ */
 const BASE_CLASS =
-  "wipe inline-flex items-center justify-center border px-10 py-4.5 font-sans text-label uppercase transition-colors duration-500 ease-editorial";
+  "wipe inline-flex items-center justify-center border px-10 py-4.5 font-sans text-label uppercase transition-colors duration-500 ease-editorial motion-reduce:transition-none";
 
 export type ButtonVariant = keyof typeof VARIANT_CLASS;
 
@@ -49,6 +55,7 @@ interface LinkButtonProps extends BaseButtonProps {
 interface ActionButtonProps extends BaseButtonProps {
   href?: never;
   type?: "button" | "submit";
+  onClick?: () => void;
 }
 
 type ButtonProps = LinkButtonProps | ActionButtonProps;
@@ -66,7 +73,11 @@ export function Button(props: ButtonProps) {
   }
 
   return (
-    <button type={props.type ?? "button"} className={classes}>
+    <button
+      type={props.type ?? "button"}
+      onClick={props.onClick}
+      className={classes}
+    >
       {children}
     </button>
   );

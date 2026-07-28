@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { cn } from "@/shared/lib/cn";
+import { Text } from "./text";
 
 export interface DisclosureItem {
   summary: string;
@@ -39,7 +40,7 @@ export function Accordion({ items, className }: AccordionProps) {
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="flex w-full items-baseline justify-between gap-8 py-7 text-left lg:py-8"
+                className="flex w-full items-baseline justify-between gap-8 py-8 text-left lg:py-10"
               >
                 <span className="font-display text-h3 font-normal text-balance">
                   {item.summary}
@@ -61,24 +62,31 @@ export function Accordion({ items, className }: AccordionProps) {
               </button>
             </h3>
 
+            {/*
+              inert is not optional here. Zero-height clipped content and
+              opacity-0 text both remain in the accessibility tree, so without
+              it a screen reader announces every answer while aria-expanded
+              still reports false.
+            */}
             <div
               id={panelId}
               role="region"
               aria-labelledby={triggerId}
+              inert={!isOpen}
               className={cn(
                 "grid transition-[grid-template-rows] duration-500 ease-editorial motion-reduce:transition-none",
                 isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
               )}
             >
               <div className="overflow-hidden">
-                <p
+                <Text
                   className={cn(
-                    "max-w-[60ch] pb-8 font-sans text-body transition-opacity duration-500 ease-editorial motion-reduce:transition-none",
+                    "max-w-[60ch] pb-8 transition-opacity duration-500 ease-editorial motion-reduce:transition-none",
                     isOpen ? "opacity-80" : "opacity-0",
                   )}
                 >
                   {item.content}
-                </p>
+                </Text>
               </div>
             </div>
           </li>

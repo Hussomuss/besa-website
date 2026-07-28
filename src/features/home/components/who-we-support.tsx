@@ -10,9 +10,9 @@ import { Text } from "@/shared/ui/text";
 /** Tiles are placed explicitly, so DOM order is free to suit mobile. */
 const TILE_CLASS = {
   copy: "col-span-3 lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1",
-  large: "lg:col-span-4 lg:col-start-1 lg:row-span-2 lg:row-start-1",
-  smallTop: "lg:col-span-3 lg:col-start-5 lg:row-start-1",
-  smallBottom: "lg:col-span-3 lg:col-start-5 lg:row-start-2",
+  large: "col-span-1 lg:col-span-4 lg:col-start-1 lg:row-span-2 lg:row-start-1",
+  smallTop: "col-span-1 lg:col-span-3 lg:col-start-5 lg:row-start-1",
+  smallBottom: "col-span-1 lg:col-span-3 lg:col-start-5 lg:row-start-2",
 } as const;
 
 const SMALL_TILE_CLASS = [TILE_CLASS.smallTop, TILE_CLASS.smallBottom];
@@ -38,7 +38,7 @@ export function WhoWeSupport() {
             margin has to go on that one tile because negative margins on the
             image cells would break the three-column track.
           */}
-          <div className="-mx-6 grid grid-cols-3 gap-1.5 md:-mx-10 lg:mx-0 lg:h-[40rem] lg:grid-cols-12 lg:grid-rows-2">
+          <div className="-mx-6 grid grid-cols-3 gap-1.5 md:-mx-10 lg:mx-0 lg:min-h-[40rem] lg:grid-cols-12 lg:grid-rows-2">
             <div
               className={`${TILE_CLASS.copy} mx-6 flex flex-col justify-center bg-sand px-7 py-11 md:mx-10 md:px-9 lg:mx-0 lg:px-10 xl:px-12`}
             >
@@ -65,7 +65,7 @@ export function WhoWeSupport() {
               <ImageFrame
                 src={feature.src}
                 alt={feature.alt}
-                sizes="(min-width: 1024px) 33vw, 33vw"
+                sizes="(min-width: 1536px) 465px, (min-width: 1024px) 31vw, 33vw"
                 className="aspect-[3/4] lg:aspect-auto lg:h-full"
               />
             </div>
@@ -75,7 +75,7 @@ export function WhoWeSupport() {
                 <ImageFrame
                   src={image.src}
                   alt={image.alt}
-                  sizes="(min-width: 1024px) 25vw, 33vw"
+                  sizes="(min-width: 1536px) 347px, (min-width: 1024px) 23vw, 33vw"
                   className="aspect-[3/4] lg:aspect-auto lg:h-full"
                 />
               </div>

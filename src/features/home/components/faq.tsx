@@ -44,7 +44,11 @@ export function Faq() {
               }))}
             />
           </div>
+        </Reveal>
 
+        {/* Its own Reveal: use-in-view fires at 12% and disconnects, so sharing
+            the grid's wrapper meant this animated long before it was on screen. */}
+        <Reveal>
           <ClosingEnquiry />
         </Reveal>
       </Container>

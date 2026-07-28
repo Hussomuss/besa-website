@@ -84,9 +84,23 @@
 }
 
 @layer base {
-  /* One focus treatment for the whole site, so no component reinvents it. */
+  /* The nav hash-links rely on this; Next 16 needs the matching
+     data-scroll-behavior attribute on <html> to leave it alone. */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  /*
+   * One focus treatment for the whole site, so no component reinvents it.
+   * currentColor rather than a fixed brand colour: a moss ring is invisible on
+   * the moss footer and services band, which is most of the site's links. This
+   * resolves to ink on bone and bone on moss with no second rule. The offset
+   * clears the link-underline hairline at bottom: -0.4em.
+   */
   :focus-visible {
-    outline: 2px solid var(--color-moss);
+    outline: 2px solid currentColor;
     outline-offset: 4px;
   }
 

@@ -11,7 +11,7 @@ export function ServicesBand() {
 
   return (
     <Section id="services" tone="moss" spacing="none">
-      <Container className="flex min-h-screen flex-col justify-center py-24 lg:py-28">
+      <Container className="flex flex-col py-24 lg:py-28">
         <div className="max-w-xl">
           <Heading as="h2" size="h2">
             {heading.map((segment) =>
@@ -39,7 +39,7 @@ export function ServicesBand() {
           the container's text alignment; scroll-px keeps snapped cards on that
           same line. At lg it reverts to a plain three-column grid.
         */}
-        <ul className="no-scrollbar -mx-6 mt-16 flex snap-x snap-mandatory scroll-px-6 gap-5 overflow-x-auto px-6 md:-mx-10 md:scroll-px-10 md:px-10 lg:mx-0 lg:mt-20 lg:grid lg:snap-none lg:grid-cols-3 lg:overflow-visible lg:px-0">
+        <ul className="no-scrollbar -mx-6 mt-16 flex snap-x snap-mandatory scroll-px-6 gap-6 lg:gap-8 overflow-x-auto px-6 md:-mx-10 md:scroll-px-10 md:px-10 lg:mx-0 lg:mt-20 lg:grid lg:snap-none lg:grid-cols-3 lg:overflow-visible lg:px-0">
           {/* h-full has to run through li and Reveal or the cards' mt-auto has
               no height to push against and the buttons stop aligning. */}
           {SERVICES.map((service, index) => (

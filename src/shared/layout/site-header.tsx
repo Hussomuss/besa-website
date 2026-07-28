@@ -8,7 +8,12 @@ export function SiteHeader() {
   return (
     <header className="relative z-50 bg-bone">
       <Container className="flex h-[var(--header-height)] items-center justify-between">
-        <Link href="/" aria-label="BESA Private Office, home">
+        {/* The wordmark itself is 41px tall, just under the tap minimum. */}
+        <Link
+          href="/"
+          aria-label="BESA Private Office, home"
+          className="inline-flex min-h-11 items-center"
+        >
           <Wordmark />
         </Link>
         <PrimaryNav />
