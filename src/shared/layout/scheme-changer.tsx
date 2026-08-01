@@ -171,14 +171,24 @@ export function SchemeChanger() {
         aria-label={SCHEME_CHANGER.title}
         tabIndex={-1}
         className={cn(
-          "fixed inset-x-0 bottom-0 z-30 max-h-[85dvh] overflow-y-auto overscroll-contain rounded-t-3xl bg-bone px-5 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-ink shadow-[0_-16px_50px_-12px_rgb(0_0_0/0.35)] transition-[translate,opacity,visibility]",
-          "sm:inset-x-auto sm:right-4 sm:bottom-20 sm:max-h-[calc(100dvh-7rem)] sm:w-[26rem] sm:rounded-3xl sm:shadow-[0_24px_60px_-20px_rgb(0_0_0/0.4)]",
+          /*
+           * The height caps subtract --header-height: the header is z-50 and
+           * the panel deliberately z-30, so any part of the panel that rises
+           * into the header band is covered and its clicks are eaten. The tab
+           * row lives at the panel's top, which is exactly the part that got
+           * covered once the type list pushed the panel to full height.
+           */
+          "fixed inset-x-0 bottom-0 z-30 max-h-[calc(100dvh-var(--header-height)-1rem)] overflow-y-auto overscroll-contain rounded-t-3xl bg-bone px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-ink shadow-[0_-16px_50px_-12px_rgb(0_0_0/0.35)] transition-[translate,opacity,visibility]",
+          "sm:inset-x-auto sm:right-4 sm:bottom-20 sm:max-h-[calc(100dvh-var(--header-height)-6rem)] sm:w-[26rem] sm:rounded-3xl sm:shadow-[0_24px_60px_-20px_rgb(0_0_0/0.4)]",
           isOpen
             ? "visible translate-y-0 opacity-100 duration-500 ease-editorial"
             : "invisible translate-y-full opacity-0 duration-200 sm:translate-y-4 motion-reduce:translate-y-0",
         )}
       >
-        <div className="flex items-center justify-between gap-4 px-3">
+        {/* Sticky, so the tabs stay reachable while the long type list
+            scrolls. It carries the panel's top padding and full-bleed ground
+            for the same reason: content must scroll behind it, not above. */}
+        <div className="sticky top-0 z-10 -mx-5 flex items-center justify-between gap-4 bg-bone px-8 pt-6 pb-3">
           <h2 className="font-display text-h3">{SCHEME_CHANGER.title}</h2>
           <div className="flex gap-1">
             {(["colours", "type"] as const).map((key) => (
@@ -199,7 +209,7 @@ export function SchemeChanger() {
         </div>
 
         {tab === "colours" ? (
-          <ul className="mt-4 flex flex-col gap-1">
+          <ul className="mt-1 flex flex-col gap-1">
             {SCHEMES.map((scheme) => (
               <li key={scheme.id}>
                 <button
@@ -228,7 +238,7 @@ export function SchemeChanger() {
             ))}
           </ul>
         ) : (
-          <ul className="mt-4 flex flex-col gap-1">
+          <ul className="mt-1 flex flex-col gap-1">
             {FONT_COMBOS.map((combo) => (
               <li key={combo.id}>
                 <button
