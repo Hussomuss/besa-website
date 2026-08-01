@@ -1,0 +1,162 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import {
+  DEFAULT_SCHEME_ID,
+  SCHEME_CHANGER,
+  SCHEME_STORAGE_KEY,
+  SCHEMES,
+} from "@/data/schemes";
+import { cn } from "@/shared/lib/cn";
+
+/*
+ * The client-preview scheme changer: a small floating trigger that opens a
+ * bottom sheet of palette swatches. Chrome, like the menu trigger — not a
+ * page call to action — so it does not wear the button component.
+ *
+ * Selecting a scheme sets `data-scheme` on <html>; the overrides the root
+ * layout generates from src/data/schemes.ts do the rest. The choice is kept
+ * in localStorage and restored before paint by the layout's inline script,
+ * which is why `active` starts unknown and is read back after mount rather
+ * than assumed — assuming the default would mishydrate a restored scheme.
+ *
+ * z-30 keeps the whole apparatus under the nav panel (z-40): a preview tool
+ * never sits over the site's own chrome.
+ */
+export function SchemeChanger() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setActive(document.documentElement.dataset.scheme ?? DEFAULT_SCHEME_ID);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+        triggerRef.current?.focus();
+        return;
+      }
+      if (event.key !== "Tab") return;
+
+      /* The sheet is fixed over the page, so Tab must cycle inside it or it
+         walks into the content behind the scrim. */
+      const nodes = Array.from(
+        panelRef.current?.querySelectorAll<HTMLElement>("button") ?? [],
+      );
+      if (nodes.length === 0) return;
+
+      const current = nodes.indexOf(document.activeElement as HTMLElement);
+      const step = event.shiftKey ? -1 : 1;
+      const next = (current + step + nodes.length) % nodes.length;
+
+      event.preventDefault();
+      nodes[next].focus();
+    };
+
+    panelRef.current?.focus();
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [isOpen]);
+
+  const apply = (id: string) => {
+    if (id === DEFAULT_SCHEME_ID) {
+      delete document.documentElement.dataset.scheme;
+    } else {
+      document.documentElement.dataset.scheme = id;
+    }
+    try {
+      if (id === DEFAULT_SCHEME_ID) {
+        localStorage.removeItem(SCHEME_STORAGE_KEY);
+      } else {
+        localStorage.setItem(SCHEME_STORAGE_KEY, id);
+      }
+    } catch {
+      /* Private browsing: the scheme still applies, it just won't survive
+         a reload. */
+    }
+    setActive(id);
+  };
+
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        type="button"
+        aria-label={SCHEME_CHANGER.trigger}
+        aria-expanded={isOpen}
+        aria-controls="scheme-panel"
+        onClick={() => setIsOpen(!isOpen)}
+        className="fixed right-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 inline-flex size-12 cursor-pointer items-center justify-center gap-1 rounded-full bg-moss shadow-[0_10px_30px_-10px_rgb(0_0_0/0.45)]"
+      >
+        <span aria-hidden className="size-1.5 rounded-full bg-bone" />
+        <span aria-hidden className="size-1.5 rounded-full bg-sand" />
+        <span aria-hidden className="size-1.5 rounded-full bg-bone/40" />
+      </button>
+
+      {/* Scrim and sheet render after the trigger, so while open the scrim
+          covers it and any outside tap — including one back on the trigger —
+          closes. Both stay mounted so the close fade has something to run on
+          and aria-controls never dangles. */}
+      <div
+        aria-hidden
+        onClick={() => setIsOpen(false)}
+        className={cn(
+          "fixed inset-0 z-30 bg-ink/20 transition-[opacity,visibility]",
+          isOpen
+            ? "visible opacity-100 duration-300"
+            : "invisible opacity-0 duration-200",
+        )}
+      />
+
+      <div
+        ref={panelRef}
+        id="scheme-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label={SCHEME_CHANGER.title}
+        tabIndex={-1}
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-30 rounded-t-3xl bg-bone px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-ink shadow-[0_-16px_50px_-12px_rgb(0_0_0/0.35)] transition-[translate,opacity,visibility]",
+          "sm:inset-x-auto sm:right-4 sm:bottom-20 sm:w-80 sm:rounded-3xl sm:shadow-[0_24px_60px_-20px_rgb(0_0_0/0.4)]",
+          isOpen
+            ? "visible translate-y-0 opacity-100 duration-500 ease-editorial"
+            : "invisible translate-y-full opacity-0 duration-200 sm:translate-y-4 motion-reduce:translate-y-0",
+        )}
+      >
+        <h2 className="px-3 font-display text-h3">{SCHEME_CHANGER.title}</h2>
+        <ul className="mt-4 flex flex-col gap-1">
+          {SCHEMES.map((scheme) => (
+            <li key={scheme.id}>
+              <button
+                type="button"
+                aria-pressed={active === scheme.id}
+                onClick={() => apply(scheme.id)}
+                className={cn(
+                  "flex min-h-11 w-full cursor-pointer items-center justify-between gap-4 rounded-xl px-3 py-2.5 transition-colors duration-200",
+                  active === scheme.id ? "bg-sand/50" : "hover:bg-sand/25",
+                )}
+              >
+                <span className="text-body">{scheme.name}</span>
+                <span aria-hidden className="flex items-center gap-1.5">
+                  {Object.values(scheme.colors).map((hex) => (
+                    <span
+                      key={hex}
+                      style={{ backgroundColor: hex }}
+                      className="size-3.5 rounded-full ring-1 ring-ink/10 ring-inset"
+                    />
+                  ))}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  );
+}
