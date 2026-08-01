@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import {
+  DEFAULT_FONT_COMBO_ID,
+  FONT_COMBOS,
+  FONT_STORAGE_KEY,
+} from "@/data/font-combos";
 import {
   DEFAULT_SCHEME_ID,
   SCHEME_CHANGER,
@@ -8,6 +13,63 @@ import {
   SCHEMES,
 } from "@/data/schemes";
 import { cn } from "@/shared/lib/cn";
+
+/*
+ * The applied scheme lives on <html>, not in React — the layout's pre-paint
+ * script writes it before hydration, and the CSS reads it directly. So the
+ * component treats the attribute as an external store: null on the server
+ * (unknown until the client can look), the attribute's value after.
+ */
+const listeners = new Set<() => void>();
+
+function subscribeScheme(listener: () => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function readScheme(): string {
+  return document.documentElement.dataset.scheme ?? DEFAULT_SCHEME_ID;
+}
+
+function readFonts(): string {
+  return document.documentElement.dataset.fonts ?? DEFAULT_FONT_COMBO_ID;
+}
+
+function readServerScheme(): string | null {
+  return null;
+}
+
+function applyAttribute(
+  attribute: "scheme" | "fonts",
+  storageKey: string,
+  defaultId: string,
+  id: string,
+): void {
+  if (id === defaultId) {
+    delete document.documentElement.dataset[attribute];
+  } else {
+    document.documentElement.dataset[attribute] = id;
+  }
+  try {
+    if (id === defaultId) {
+      localStorage.removeItem(storageKey);
+    } else {
+      localStorage.setItem(storageKey, id);
+    }
+  } catch {
+    /* Private browsing: the choice still applies, it just won't survive
+       a reload. */
+  }
+  for (const listener of listeners) listener();
+}
+
+function applyScheme(id: string): void {
+  applyAttribute("scheme", SCHEME_STORAGE_KEY, DEFAULT_SCHEME_ID, id);
+}
+
+function applyFonts(id: string): void {
+  applyAttribute("fonts", FONT_STORAGE_KEY, DEFAULT_FONT_COMBO_ID, id);
+}
 
 /*
  * The client-preview scheme changer: a small floating trigger that opens a
@@ -25,13 +87,19 @@ import { cn } from "@/shared/lib/cn";
  */
 export function SchemeChanger() {
   const [isOpen, setIsOpen] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
+  const [tab, setTab] = useState<"colours" | "type">("colours");
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setActive(document.documentElement.dataset.scheme ?? DEFAULT_SCHEME_ID);
-  }, []);
+  const activeScheme = useSyncExternalStore(
+    subscribeScheme,
+    readScheme,
+    readServerScheme,
+  );
+  const activeFonts = useSyncExternalStore(
+    subscribeScheme,
+    readFonts,
+    readServerScheme,
+  );
 
   useEffect(() => {
     if (!isOpen) return;
@@ -63,25 +131,6 @@ export function SchemeChanger() {
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [isOpen]);
-
-  const apply = (id: string) => {
-    if (id === DEFAULT_SCHEME_ID) {
-      delete document.documentElement.dataset.scheme;
-    } else {
-      document.documentElement.dataset.scheme = id;
-    }
-    try {
-      if (id === DEFAULT_SCHEME_ID) {
-        localStorage.removeItem(SCHEME_STORAGE_KEY);
-      } else {
-        localStorage.setItem(SCHEME_STORAGE_KEY, id);
-      }
-    } catch {
-      /* Private browsing: the scheme still applies, it just won't survive
-         a reload. */
-    }
-    setActive(id);
-  };
 
   return (
     <>
@@ -122,40 +171,93 @@ export function SchemeChanger() {
         aria-label={SCHEME_CHANGER.title}
         tabIndex={-1}
         className={cn(
-          "fixed inset-x-0 bottom-0 z-30 rounded-t-3xl bg-bone px-4 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-ink shadow-[0_-16px_50px_-12px_rgb(0_0_0/0.35)] transition-[translate,opacity,visibility]",
-          "sm:inset-x-auto sm:right-4 sm:bottom-20 sm:w-80 sm:rounded-3xl sm:shadow-[0_24px_60px_-20px_rgb(0_0_0/0.4)]",
+          "fixed inset-x-0 bottom-0 z-30 max-h-[85dvh] overflow-y-auto overscroll-contain rounded-t-3xl bg-bone px-5 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-ink shadow-[0_-16px_50px_-12px_rgb(0_0_0/0.35)] transition-[translate,opacity,visibility]",
+          "sm:inset-x-auto sm:right-4 sm:bottom-20 sm:max-h-[calc(100dvh-7rem)] sm:w-[26rem] sm:rounded-3xl sm:shadow-[0_24px_60px_-20px_rgb(0_0_0/0.4)]",
           isOpen
             ? "visible translate-y-0 opacity-100 duration-500 ease-editorial"
             : "invisible translate-y-full opacity-0 duration-200 sm:translate-y-4 motion-reduce:translate-y-0",
         )}
       >
-        <h2 className="px-3 font-display text-h3">{SCHEME_CHANGER.title}</h2>
-        <ul className="mt-4 flex flex-col gap-1">
-          {SCHEMES.map((scheme) => (
-            <li key={scheme.id}>
+        <div className="flex items-center justify-between gap-4 px-3">
+          <h2 className="font-display text-h3">{SCHEME_CHANGER.title}</h2>
+          <div className="flex gap-1">
+            {(["colours", "type"] as const).map((key) => (
               <button
+                key={key}
                 type="button"
-                aria-pressed={active === scheme.id}
-                onClick={() => apply(scheme.id)}
+                aria-pressed={tab === key}
+                onClick={() => setTab(key)}
                 className={cn(
-                  "flex min-h-11 w-full cursor-pointer items-center justify-between gap-4 rounded-xl px-3 py-2.5 transition-colors duration-200",
-                  active === scheme.id ? "bg-sand/50" : "hover:bg-sand/25",
+                  "min-h-11 cursor-pointer rounded-full px-4 text-body transition-colors duration-200",
+                  tab === key ? "bg-sand/50" : "text-ink/60 hover:bg-sand/25",
                 )}
               >
-                <span className="text-body">{scheme.name}</span>
-                <span aria-hidden className="flex items-center gap-1.5">
-                  {Object.values(scheme.colors).map((hex) => (
-                    <span
-                      key={hex}
-                      style={{ backgroundColor: hex }}
-                      className="size-3.5 rounded-full ring-1 ring-ink/10 ring-inset"
-                    />
-                  ))}
-                </span>
+                {SCHEME_CHANGER.tabs[key]}
               </button>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        </div>
+
+        {tab === "colours" ? (
+          <ul className="mt-4 flex flex-col gap-1">
+            {SCHEMES.map((scheme) => (
+              <li key={scheme.id}>
+                <button
+                  type="button"
+                  aria-pressed={activeScheme === scheme.id}
+                  onClick={() => applyScheme(scheme.id)}
+                  className={cn(
+                    "flex min-h-11 w-full cursor-pointer items-center justify-between gap-4 rounded-xl px-3 py-2.5 transition-colors duration-200",
+                    activeScheme === scheme.id
+                      ? "bg-sand/50"
+                      : "hover:bg-sand/25",
+                  )}
+                >
+                  <span className="text-body">{scheme.name}</span>
+                  <span aria-hidden className="flex items-center gap-1.5">
+                    {Object.values(scheme.colors).map((hex) => (
+                      <span
+                        key={hex}
+                        style={{ backgroundColor: hex }}
+                        className="size-3.5 rounded-full ring-1 ring-ink/10 ring-inset"
+                      />
+                    ))}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ul className="mt-4 flex flex-col gap-1">
+            {FONT_COMBOS.map((combo) => (
+              <li key={combo.id}>
+                <button
+                  type="button"
+                  aria-pressed={activeFonts === combo.id}
+                  onClick={() => applyFonts(combo.id)}
+                  className={cn(
+                    "flex min-h-11 w-full cursor-pointer flex-col items-start rounded-xl px-3 py-2.5 transition-colors duration-200",
+                    activeFonts === combo.id ? "bg-sand/50" : "hover:bg-sand/25",
+                  )}
+                >
+                  {/* Each name set in its own face: the row is the specimen. */}
+                  <span
+                    style={{ fontFamily: `var(${combo.displayVar})` }}
+                    className="text-lead"
+                  >
+                    {combo.name}
+                  </span>
+                  <span
+                    style={{ fontFamily: `var(${combo.sansVar})` }}
+                    className="text-body text-ink/60"
+                  >
+                    {combo.sub}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </>
   );

@@ -104,9 +104,79 @@ export const SCHEMES: readonly Scheme[] = [
       rust: "#9e3629",
     },
   },
+  {
+    id: "tealgarth",
+    name: "Tealgarth",
+    colors: {
+      bone: "#f3f3ec",
+      sand: "#cfd6ce",
+      moss: "#1f4b47",
+      ink: "#20302c",
+      rust: "#9b3a2a",
+    },
+  },
+  {
+    id: "ochrebarn",
+    name: "Ochrebarn",
+    colors: {
+      bone: "#f9f4e7",
+      sand: "#e7d9b8",
+      moss: "#6b5320",
+      ink: "#322b1c",
+      rust: "#963226",
+    },
+  },
+  {
+    id: "slatemere",
+    name: "Slatemere",
+    colors: {
+      bone: "#f4f4f2",
+      sand: "#d5d9da",
+      moss: "#4a5a66",
+      ink: "#24292d",
+      rust: "#9e3629",
+    },
+  },
+  {
+    id: "rosefen",
+    name: "Rosefen",
+    colors: {
+      bone: "#faf2ef",
+      sand: "#ecd5cd",
+      moss: "#74463f",
+      ink: "#2e2422",
+      rust: "#8e2b20",
+    },
+  },
+  {
+    id: "pinehollow",
+    name: "Pinehollow",
+    colors: {
+      bone: "#f5f4ec",
+      sand: "#d6d8c6",
+      moss: "#2e4638",
+      ink: "#232a20",
+      rust: "#9e3629",
+    },
+  },
+  {
+    id: "peatmoor",
+    name: "Peatmoor",
+    colors: {
+      bone: "#f6f1ea",
+      sand: "#ddd3c5",
+      moss: "#3e332b",
+      ink: "#26201b",
+      rust: "#8e2b20",
+    },
+  },
 ];
 
 export const SCHEME_CHANGER = {
-  trigger: "Change colour scheme",
-  title: "Colour schemes",
+  trigger: "Preview colours and type",
+  title: "Preview",
+  tabs: {
+    colours: "Colours",
+    type: "Type",
+  },
 } as const;
